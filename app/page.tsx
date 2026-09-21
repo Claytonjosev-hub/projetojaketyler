@@ -3,13 +3,17 @@ import { MealsList } from "@/components/MealsList";
 import { SupplementsList } from "@/components/SupplementsList";
 import { TrainingCard } from "@/components/TrainingCard";
 import { WeekView } from "@/components/WeekView";
+import { ActivityDoneCheckbox } from "@/components/ActivityDoneCheckbox";
 import { getContent, getDailyLog } from "@/lib/db";
-import { getDayPattern, getExercisesForWeek, getProgramDay, getWeekNumber } from "@/lib/program";
+import {
+  getDayPattern,
+  getExercisesForWeek,
+  getProgramDay,
+  getWeekNumber,
+  isRestActivity,
+  todayIso,
+} from "@/lib/program";
 import { setActivityChoice } from "@/app/actions";
-
-function todayIso(): string {
-  return new Date().toISOString().slice(0, 10);
-}
 
 export default async function HojePage({
   searchParams,
@@ -32,6 +36,11 @@ export default async function HojePage({
   const programDay = getProgramDay(date, program.startDate);
   const weekNumber = getWeekNumber(programDay);
   const pattern = getDayPattern(date, weekPattern, dailyLog);
+
+  const workoutBlock = pattern.trainingBlock ? workoutPlan[pattern.trainingBlock] : null;
+  if (pattern.trainingBlock && !workoutBlock) {
+    throw new Error(`workoutPlan has no entry for block "${pattern.trainingBlock}"`);
+  }
 
   const mealsDoneCount = meals.filter((m) => dailyLog?.meals[m.id]?.done).length;
   const trainingDaysThisWeek = weekPattern.filter((p) => p.trainingBlock).length;
@@ -60,19 +69,19 @@ export default async function HojePage({
 
       <WeekView today={today} />
 
-      {pattern.trainingBlock ? (
+      {pattern.trainingBlock && workoutBlock ? (
         <TrainingCard
           key={date}
           date={date}
           block={pattern.trainingBlock}
-          focus={workoutPlan[pattern.trainingBlock].focus}
-          exercises={getExercisesForWeek(workoutPlan[pattern.trainingBlock], weekNumber)}
+          focus={workoutBlock.focus}
+          exercises={getExercisesForWeek(workoutBlock, weekNumber)}
           exercisesDone={dailyLog?.exercises_done ?? {}}
           trainingDone={dailyLog?.training_done ?? false}
           label="Treino de hoje"
         />
       ) : (
-        <ActivityPicker date={date} pattern={pattern} />
+        <ActivityPicker date={date} pattern={pattern} trainingDone={dailyLog?.training_done ?? false} />
       )}
 
       <MealsList key={date} date={date} meals={meals} mealLogs={dailyLog?.meals ?? {}} />
@@ -84,33 +93,43 @@ export default async function HojePage({
 async function ActivityPicker({
   date,
   pattern,
+  trainingDone,
 }: {
   date: string;
   pattern: ReturnType<typeof getDayPattern>;
+  trainingDone: boolean;
 }) {
   async function pick(formData: FormData) {
     "use server";
     const activity = String(formData.get("activity"));
     await setActivityChoice(date, activity || null);
   }
+  const showDoneCheckbox = pattern.activity !== null && !isRestActivity(pattern.activity);
   return (
-    <form action={pick} className="rounded-2xl border border-neutral-200 bg-white p-4">
-      <p className="mb-2 font-medium">Atividade de hoje</p>
-      <div className="flex flex-wrap gap-2">
-        {pattern.activityOptions.map((option: string) => (
-          <button
-            key={option}
-            type="submit"
-            name="activity"
-            value={option}
-            className={`rounded-full px-3 py-1.5 text-sm ${
-              pattern.activity === option ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-700"
-            }`}
-          >
-            {option}
-          </button>
-        ))}
-      </div>
-    </form>
+    <div className="rounded-2xl border border-neutral-200 bg-white p-4">
+      <form action={pick}>
+        <p className="mb-2 font-medium">Atividade de hoje</p>
+        <div className="flex flex-wrap gap-2">
+          {pattern.activityOptions.map((option: string) => (
+            <button
+              key={option}
+              type="submit"
+              name="activity"
+              value={option}
+              className={`rounded-full px-3 py-1.5 text-sm ${
+                pattern.activity === option ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-700"
+              }`}
+            >
+              {option}
+            </button>
+          ))}
+        </div>
+      </form>
+      {showDoneCheckbox && (
+        <div className="mt-3 border-t border-neutral-100 pt-3">
+          <ActivityDoneCheckbox key={date} date={date} trainingDone={trainingDone} />
+        </div>
+      )}
+    </div>
   );
 }

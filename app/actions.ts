@@ -2,8 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { getContent, getDailyLog, setContent, upsertDailyLog } from "@/lib/db";
-import { getDayPattern } from "@/lib/program";
+import { getDayPattern, isRestActivity } from "@/lib/program";
 import type { ContentKey, ContentShape } from "@/lib/types";
+
+const CONTENT_KEYS: ContentKey[] = ["program", "weekPattern", "workoutPlan", "meals", "supplements"];
 
 async function recomputeTrainingDone(date: string, exercisesDone: Record<string, boolean>) {
   const [weekPattern, workoutPlan, dailyLog] = await Promise.all([
@@ -14,6 +16,9 @@ async function recomputeTrainingDone(date: string, exercisesDone: Record<string,
   const pattern = getDayPattern(date, weekPattern, dailyLog);
   if (!pattern.trainingBlock) return false;
   const block = workoutPlan[pattern.trainingBlock];
+  if (!block) {
+    throw new Error(`workoutPlan has no entry for block "${pattern.trainingBlock}"`);
+  }
   return block.exercises.every((_, index) => exercisesDone[String(index)] === true);
 }
 
@@ -52,7 +57,19 @@ export async function toggleSupplement(date: string, supplementId: string, done:
 }
 
 export async function setActivityChoice(date: string, activity: string | null) {
-  await upsertDailyLog(date, { activity_choice: activity });
+  const patch: Partial<{ activity_choice: string | null; training_done: boolean }> = {
+    activity_choice: activity,
+  };
+  if (isRestActivity(activity)) {
+    patch.training_done = false;
+  }
+  await upsertDailyLog(date, patch);
+  revalidatePath("/");
+  revalidatePath("/progress");
+}
+
+export async function toggleActivityDone(date: string, done: boolean) {
+  await upsertDailyLog(date, { training_done: done });
   revalidatePath("/");
   revalidatePath("/progress");
 }
@@ -61,6 +78,9 @@ export async function saveContent(
   key: ContentKey,
   jsonText: string,
 ): Promise<{ ok: true } | { ok: false; error: string }> {
+  if (!CONTENT_KEYS.includes(key)) {
+    return { ok: false, error: "Chave de conteúdo inválida." };
+  }
   let parsed: unknown;
   try {
     parsed = JSON.parse(jsonText);

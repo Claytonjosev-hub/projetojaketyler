@@ -14,6 +14,16 @@ function toUtcDate(date: string): number {
   return Date.UTC(y, m - 1, d);
 }
 
+/** Today's date as "YYYY-MM-DD", resolved in the given IANA timezone (defaults to the app's locale). */
+export function todayIso(timeZone: string = "America/Fortaleza"): string {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
+}
+
 /** 1-indexed day offset from the program's start date. */
 export function getProgramDay(date: string, startDate: string): number {
   const diffDays = Math.round((toUtcDate(date) - toUtcDate(startDate)) / MS_PER_DAY);
@@ -78,6 +88,11 @@ export function getExercisesForWeek(
 }
 
 const REST_ACTIVITIES = new Set(["Nenhuma", "Descanso"]);
+
+/** True when the given activity choice represents rest (no activity to mark done). */
+export function isRestActivity(activity: string | null): boolean {
+  return activity === null || REST_ACTIVITIES.has(activity);
+}
 
 export interface IsDayCompleteParams {
   date: string;

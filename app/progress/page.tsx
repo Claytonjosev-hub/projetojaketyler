@@ -2,7 +2,7 @@ import { Heatmap, type HeatmapDay } from "@/components/Heatmap";
 import { Card } from "@/components/Card";
 import { ProgressBar } from "@/components/ProgressBar";
 import { getContent, getDailyLog } from "@/lib/db";
-import { getDayPattern, getProgramDay, getWeekNumber, isDayComplete } from "@/lib/program";
+import { getDayPattern, getProgramDay, getWeekNumber, isDayComplete, todayIso } from "@/lib/program";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +13,7 @@ function isoDateNDaysFrom(base: string, offset: number): string {
 }
 
 export default async function ProgressPage() {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayIso();
   const [program, weekPattern, meals, supplements] = await Promise.all([
     getContent("program"),
     getContent("weekPattern"),
