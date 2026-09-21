@@ -11,5 +11,8 @@ create table if not exists daily_logs (
   activity_choice text,
   meals jsonb not null default '{}'::jsonb,
   supplements jsonb not null default '{}'::jsonb,
+  note text not null default '',
   updated_at timestamptz not null default now()
 );
+
+alter table daily_logs add column if not exists note text not null default '';

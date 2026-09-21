@@ -1,5 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { getDayPattern, getProgramDay, getWeekNumber, isDayComplete, isRestActivity } from "./program";
+import {
+  formatDayMonth,
+  formatWeekSummary,
+  getDayOfWeek,
+  getDayPattern,
+  getProgramDay,
+  getWeekNumber,
+  isDayComplete,
+  isRestActivity,
+} from "./program";
 import type { DailyLog, Meal, Supplement, WeekPatternEntry } from "./types";
 
 const weekPattern: WeekPatternEntry[] = [
@@ -19,7 +28,15 @@ const meals: Meal[] = [
 const supplements: Supplement[] = [{ id: "omega-3", name: "Ômega 3", dose: "2 cápsulas" }];
 
 function emptyLog(date: string): DailyLog {
-  return { date, training_done: false, exercises_done: {}, activity_choice: null, meals: {}, supplements: {} };
+  return {
+    date,
+    training_done: false,
+    exercises_done: {},
+    activity_choice: null,
+    meals: {},
+    supplements: {},
+    note: "",
+  };
 }
 
 describe("getProgramDay", () => {
@@ -131,5 +148,61 @@ describe("isDayComplete", () => {
       supplements: { "omega-3": true },
     };
     expect(isDayComplete({ date: "2026-09-14", today, dailyLog: log, pattern, meals, supplements })).toBe(true);
+  });
+});
+
+describe("getDayOfWeek", () => {
+  it("maps Monday to 0 and Sunday to 6", () => {
+    expect(getDayOfWeek("2026-09-21")).toBe(0);
+    expect(getDayOfWeek("2026-09-27")).toBe(6);
+  });
+});
+
+describe("formatDayMonth", () => {
+  it("formats an ISO date in Portuguese short form", () => {
+    expect(formatDayMonth("2026-09-21")).toBe("21 set");
+    expect(formatDayMonth("2026-01-05")).toBe("5 jan");
+  });
+});
+
+describe("formatWeekSummary", () => {
+  const base = {
+    weekNumber: 1,
+    firstDate: "2026-09-21",
+    lastDate: "2026-09-27",
+    daysElapsed: 7,
+    daysComplete: 4,
+    trainingsDone: 5,
+    trainingsRequired: 6,
+    mealsDone: 38,
+    mealsTotal: 42,
+  };
+
+  it("lists the stats and each day's note", () => {
+    expect(
+      formatWeekSummary({
+        ...base,
+        notes: [
+          { date: "2026-09-21", note: "treino rendeu bem" },
+          { date: "2026-09-22", note: "pulei o lanche da tarde" },
+        ],
+      }),
+    ).toBe(
+      [
+        "Semana 1 · 21 set a 27 set",
+        "Dias completos: 4/7",
+        "Treinos: 5/6",
+        "Refeições: 38/42",
+        "",
+        "seg 21 set — treino rendeu bem",
+        "ter 22 set — pulei o lanche da tarde",
+      ].join("\n"),
+    );
+  });
+
+  it("omits the notes block when there are no notes", () => {
+    expect(formatWeekSummary({ ...base, notes: [] })).toBe(
+      ["Semana 1 · 21 set a 27 set", "Dias completos: 4/7", "Treinos: 5/6", "Refeições: 38/42"].join("\n"),
+    );
   });
 });

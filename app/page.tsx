@@ -4,18 +4,20 @@ import { SupplementsList } from "@/components/SupplementsList";
 import { TrainingCard } from "@/components/TrainingCard";
 import { WeekView } from "@/components/WeekView";
 import { ActivityDoneCheckbox } from "@/components/ActivityDoneCheckbox";
+import { DayNote } from "@/components/DayNote";
 import { getContent, getDailyLog } from "@/lib/db";
-import { getDayPattern, getProgramDay, getWeekNumber, isRestActivity, todayIso } from "@/lib/program";
+import {
+  formatDayMonth,
+  getDayOfWeek,
+  getDayPattern,
+  getProgramDay,
+  getWeekNumber,
+  isRestActivity,
+  todayIso,
+} from "@/lib/program";
 import { setActivityChoice } from "@/app/actions";
 
 const WEEKDAY_NAMES = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
-const MONTHS_SHORT = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
-
-function formatDayMonth(date: string): string {
-  const [, month, day] = date.split("-").map(Number);
-  return `${day} ${MONTHS_SHORT[month - 1]}`;
-}
-
 export default async function HojePage({
   searchParams,
 }: {
@@ -43,8 +45,7 @@ export default async function HojePage({
     throw new Error(`workoutPlan has no block "${pattern.trainingBlock}"`);
   }
 
-  const jsDay = new Date(`${date}T00:00:00Z`).getUTCDay();
-  const dayOfWeek = jsDay === 0 ? 6 : jsDay - 1;
+  const dayOfWeek = getDayOfWeek(date);
 
   const daysRemaining = Math.max(0, program.durationWeeks * 7 - programDay + 1);
 
@@ -102,6 +103,8 @@ export default async function HojePage({
         supplements={supplements}
         supplementLogs={dailyLog?.supplements ?? {}}
       />
+
+      <DayNote key={`note-${date}`} date={date} note={dailyLog?.note ?? ""} />
     </main>
   );
 }

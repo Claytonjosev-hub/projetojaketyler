@@ -56,6 +56,12 @@ export async function toggleSupplement(date: string, supplementId: string, done:
   revalidatePath("/progress");
 }
 
+export async function saveDayNote(date: string, note: string) {
+  await upsertDailyLog(date, { note: note.trim() });
+  revalidatePath("/");
+  revalidatePath("/progress");
+}
+
 export async function setActivityChoice(date: string, activity: string | null) {
   const patch: Partial<{ activity_choice: string | null; training_done: boolean }> = {
     activity_choice: activity,

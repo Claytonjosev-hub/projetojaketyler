@@ -1,8 +1,19 @@
 import { Heatmap, type HeatmapDay } from "@/components/Heatmap";
 import { Card } from "@/components/Card";
 import { ProgressBar } from "@/components/ProgressBar";
+import { WeekSummaryCard } from "@/components/WeekSummaryCard";
 import { getContent, getDailyLog } from "@/lib/db";
-import { getDayPattern, getProgramDay, getWeekNumber, isDayComplete, todayIso } from "@/lib/program";
+import {
+  formatWeekSummary,
+  getDayOfWeek,
+  getDayPattern,
+  getProgramDay,
+  getWeekNumber,
+  isDayComplete,
+  isRestActivity,
+  todayIso,
+  type WeekSummary,
+} from "@/lib/program";
 
 export const dynamic = "force-dynamic";
 
@@ -23,6 +34,7 @@ export default async function ProgressPage() {
 
   const totalDays = program.durationWeeks * 7;
   const days: HeatmapDay[] = [];
+  const weekSummaries = new Map<number, WeekSummary>();
   let completedCount = 0;
   let elapsedCount = 0;
   let currentStreak = 0;
@@ -31,8 +43,7 @@ export default async function ProgressPage() {
     const date = isoDateNDaysFrom(program.startDate, offset);
     const programDay = getProgramDay(date, program.startDate);
     const weekNumber = getWeekNumber(programDay);
-    const jsDay = new Date(`${date}T00:00:00Z`).getUTCDay();
-    const dayOfWeek = jsDay === 0 ? 6 : jsDay - 1;
+    const dayOfWeek = getDayOfWeek(date);
     const isFuture = date > today;
 
     const dailyLog = isFuture ? null : await getDailyLog(date);
@@ -49,8 +60,39 @@ export default async function ProgressPage() {
       } else {
         currentStreak = 0;
       }
+
+      const week = weekSummaries.get(weekNumber) ?? {
+        weekNumber,
+        firstDate: date,
+        lastDate: date,
+        daysElapsed: 0,
+        daysComplete: 0,
+        trainingsDone: 0,
+        trainingsRequired: 0,
+        mealsDone: 0,
+        mealsTotal: 0,
+        notes: [],
+      };
+
+      const requiresTraining =
+        Boolean(pattern.trainingBlock) || !isRestActivity(pattern.activity);
+
+      week.lastDate = date;
+      week.daysElapsed += 1;
+      week.daysComplete += complete ? 1 : 0;
+      week.trainingsRequired += requiresTraining ? 1 : 0;
+      week.trainingsDone += requiresTraining && dailyLog?.training_done ? 1 : 0;
+      week.mealsTotal += meals.length;
+      week.mealsDone += meals.filter((meal) => dailyLog?.meals[meal.id]?.done).length;
+      if (dailyLog?.note) {
+        week.notes.push({ date, note: dailyLog.note });
+      }
+
+      weekSummaries.set(weekNumber, week);
     }
   }
+
+  const weeks = [...weekSummaries.values()].sort((a, b) => b.weekNumber - a.weekNumber);
 
   const completionRate = elapsedCount === 0 ? 0 : Math.round((completedCount / elapsedCount) * 100);
 
@@ -110,6 +152,23 @@ export default async function ProgressPage() {
             <ProgressBar value={monthCompleted} max={monthElapsed} />
           </div>
         </Card>
+      )}
+
+      {weeks.length > 0 && (
+        <>
+          <h2 className="px-1 pt-4 text-lg font-bold">Diário</h2>
+          <p className="px-1 pb-1 text-sm text-ink-dim">
+            Resumo por semana, pronto pra mandar no feedback.
+          </p>
+          {weeks.map((week, i) => (
+            <WeekSummaryCard
+              key={week.weekNumber}
+              summary={week}
+              text={formatWeekSummary(week)}
+              defaultOpen={i === 0}
+            />
+          ))}
+        </>
       )}
     </main>
   );

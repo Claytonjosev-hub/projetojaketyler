@@ -17,6 +17,21 @@ export function todayIso(timeZone: string = "America/Fortaleza"): string {
   }).format(new Date());
 }
 
+const WEEKDAY_SHORT = ["seg", "ter", "qua", "qui", "sex", "sáb", "dom"];
+const MONTHS_SHORT = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+
+/** Weekday index for a date, 0 = Monday .. 6 = Sunday. */
+export function getDayOfWeek(date: string): number {
+  const jsDay = new Date(`${date}T00:00:00Z`).getUTCDay(); // 0 = Sunday
+  return jsDay === 0 ? 6 : jsDay - 1;
+}
+
+/** "2026-09-21" -> "21 set" */
+export function formatDayMonth(date: string): string {
+  const [, month, day] = date.split("-").map(Number);
+  return `${day} ${MONTHS_SHORT[month - 1]}`;
+}
+
 /** 1-indexed day offset from the program's start date. */
 export function getProgramDay(date: string, startDate: string): number {
   const diffDays = Math.round((toUtcDate(date) - toUtcDate(startDate)) / MS_PER_DAY);
@@ -42,8 +57,7 @@ export function getDayPattern(
   weekPattern: WeekPatternEntry[],
   dailyLog: DailyLog | null,
 ): ResolvedDayPattern {
-  const jsDay = new Date(`${date}T00:00:00Z`).getUTCDay(); // 0 = Sunday
-  const dayOfWeek = jsDay === 0 ? 6 : jsDay - 1; // 0 = Monday .. 6 = Sunday
+  const dayOfWeek = getDayOfWeek(date);
   const base = weekPattern.find((entry) => entry.dayOfWeek === dayOfWeek);
   if (!base) {
     throw new Error(`weekPattern has no entry for dayOfWeek ${dayOfWeek}`);
@@ -101,4 +115,43 @@ export function isDayComplete({
   if (requiresTraining && !dailyLog.training_done) return false;
 
   return true;
+}
+
+export interface DayNote {
+  date: string;
+  note: string;
+}
+
+export interface WeekSummary {
+  weekNumber: number;
+  firstDate: string;
+  lastDate: string;
+  daysElapsed: number;
+  daysComplete: number;
+  trainingsDone: number;
+  trainingsRequired: number;
+  mealsDone: number;
+  mealsTotal: number;
+  notes: DayNote[];
+}
+
+/** Week recap as plain text, ready to paste into the weekly WhatsApp feedback. */
+export function formatWeekSummary(summary: WeekSummary): string {
+  const lines = [
+    `Semana ${summary.weekNumber} · ${formatDayMonth(summary.firstDate)} a ${formatDayMonth(summary.lastDate)}`,
+    `Dias completos: ${summary.daysComplete}/${summary.daysElapsed}`,
+    `Treinos: ${summary.trainingsDone}/${summary.trainingsRequired}`,
+    `Refeições: ${summary.mealsDone}/${summary.mealsTotal}`,
+  ];
+
+  if (summary.notes.length > 0) {
+    lines.push("");
+    for (const entry of summary.notes) {
+      lines.push(
+        `${WEEKDAY_SHORT[getDayOfWeek(entry.date)]} ${formatDayMonth(entry.date)} — ${entry.note}`,
+      );
+    }
+  }
+
+  return lines.join("\n");
 }

@@ -30,6 +30,7 @@ function rowToDailyLog(row: Record<string, unknown>): DailyLog {
     activity_choice: (row.activity_choice as string | null) ?? null,
     meals: (row.meals ?? {}) as DailyLog["meals"],
     supplements: (row.supplements ?? {}) as Record<string, boolean>,
+    note: (row.note as string | null) ?? "",
   };
 }
 
@@ -50,11 +51,12 @@ export async function upsertDailyLog(
     activity_choice: null,
     meals: {},
     supplements: {},
+    note: "",
   };
   const next: DailyLog = { ...existing, ...patch, date };
   await sql`
     insert into daily_logs
-      (date, training_done, exercises_done, activity_choice, meals, supplements, updated_at)
+      (date, training_done, exercises_done, activity_choice, meals, supplements, note, updated_at)
     values (
       ${date},
       ${next.training_done},
@@ -62,6 +64,7 @@ export async function upsertDailyLog(
       ${next.activity_choice},
       ${JSON.stringify(next.meals)}::jsonb,
       ${JSON.stringify(next.supplements)}::jsonb,
+      ${next.note},
       now()
     )
     on conflict (date) do update set
@@ -70,6 +73,7 @@ export async function upsertDailyLog(
       activity_choice = excluded.activity_choice,
       meals = excluded.meals,
       supplements = excluded.supplements,
+      note = excluded.note,
       updated_at = now()
   `;
   return next;

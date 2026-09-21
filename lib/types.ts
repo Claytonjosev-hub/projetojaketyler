@@ -69,4 +69,5 @@ export interface DailyLog {
   activity_choice: string | null;
   meals: Record<string, MealLogEntry>;
   supplements: Record<string, boolean>;
+  note: string; // free-text log of what happened that day
 }
