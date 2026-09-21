@@ -1,0 +1,5 @@
+[
+  { "id": "omega-3", "name": "Ômega 3", "dose": "2 a 3 cápsulas por dia" },
+  { "id": "multivitaminico", "name": "Multivitamínico", "dose": "1 cápsula por dia" },
+  { "id": "magnesio-inositol", "name": "Magnésio Inositol", "dose": "1 scoop por noite, antes de dormir (higiene do sono)" }
+]

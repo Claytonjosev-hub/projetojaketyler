@@ -1,0 +1,9 @@
+[
+  { "dayOfWeek": 0, "trainingBlock": "A", "activity": "Cardio pós-treino 20-40min @ 120-130bpm", "activityEditable": false, "activityOptions": [] },
+  { "dayOfWeek": 1, "trainingBlock": "B", "activity": "Cardio pós-treino 20-40min @ 120-130bpm", "activityEditable": false, "activityOptions": [] },
+  { "dayOfWeek": 2, "trainingBlock": "C", "activity": "Cardio pós-treino 20-40min @ 120-130bpm", "activityEditable": false, "activityOptions": [] },
+  { "dayOfWeek": 3, "trainingBlock": "D", "activity": "Cardio pós-treino 20-40min @ 120-130bpm", "activityEditable": false, "activityOptions": [] },
+  { "dayOfWeek": 4, "trainingBlock": "E", "activity": "Cardio pós-treino 20-40min @ 120-130bpm", "activityEditable": false, "activityOptions": [] },
+  { "dayOfWeek": 5, "trainingBlock": null, "activity": null, "activityEditable": true, "activityOptions": ["Futebol", "Corrida", "Descanso"] },
+  { "dayOfWeek": 6, "trainingBlock": null, "activity": null, "activityEditable": true, "activityOptions": ["Futebol", "Corrida", "Descanso"] }
+]

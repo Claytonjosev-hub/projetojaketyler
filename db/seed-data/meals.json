@@ -1,0 +1,59 @@
+[
+  {
+    "id": "cafe-da-manha",
+    "time": "07:00",
+    "name": "Café da Manhã",
+    "options": [
+      { "title": "Padrão", "items": "Pão francês 1 un (50g) · Ovo de galinha 2 un (100g) · Queijo coalho 20g · Café coado com açúcar 250ml · Manteiga 1 colher de chá cheia (8g)" },
+      { "title": "Tapioca", "items": "Goma de tapioca 2,5 colheres de sopa cheias (50g) · Ovo de galinha 2 un (100g) · Queijo coalho 20g · Café coado com açúcar 250ml" },
+      { "title": "Cuscuz", "items": "Cuscuz de milho cozido sem sal 70g · Semente de chia 1 colher de chá cheia (6g) (ou Aveia 1 colher de sobremesa cheia — 7g) · Ovo de galinha 2 un (100g) · Queijo coalho 20g · Café coado com açúcar 250ml" }
+    ]
+  },
+  {
+    "id": "lanche-manha",
+    "time": "10:00",
+    "name": "Lanche da Manhã",
+    "options": [
+      { "title": "Padrão", "items": "Mamão 150g (ou Morango 12 un/144g, Melão 180g, Manga 130g, Banana 1 un/65g, Maçã 1 un/130g) · Semente de chia 1 colher de sopa cheia (15g) (ou Aveia em flocos 1 colher de sopa/15g) · Psyllium 1 colher de sobremesa (4g)" }
+    ]
+  },
+  {
+    "id": "almoco",
+    "time": "12:00",
+    "name": "Almoço",
+    "options": [
+      { "title": "Padrão", "items": "Arroz branco cozido 2,5 colheres cheias (112,5g) · Peito de frango sem pele grelhado 180g (ou Carne — alcatra/contrafilé/coxão mole/filé mignon/lagarto/patinho — cozida/grelhada/assada com sal 150g, ou Tilápia cozida 300g) · Alface à vontade · Beterraba à vontade · Azeite de oliva extravirgem 1,5 colher de sopa rasa (12ml)" }
+    ]
+  },
+  {
+    "id": "lanche-tarde",
+    "time": "16:00",
+    "name": "Lanche da Tarde",
+    "options": [
+      { "title": "Padrão", "items": "Pão de forma integral 2 fatias (50g) (ou Pão francês 1 un/50g, ou Pão de forma 2 fatias/50g) · Ovo de galinha 1 un (50g) · Peito de frango sem pele grelhado 70g · Requeijão light Danúbio 15g (ou Queijo muçarela 1 fatia/20g, Queijo coalho 20g, Queijo minas 1 fatia/30g)" },
+      { "title": "Iogurte com Whey", "items": "Iogurte zero açúcar sabor morango líquido (Frimesa) 200ml · Banana grande 1 un (100g) · Granola 1,5 colher de sopa (15g) · Psyllium 1 colher de sopa (10g) · Whey Concentrado Baunilha (Cellforce) 2 dosadores (30g)" },
+      { "title": "Tapioca com Frango", "items": "Goma de tapioca 50g · Semente de chia 1 colher de sobremesa cheia (8g) · Peito de frango sem pele grelhado 60g · Requeijão light Danúbio 20g" },
+      { "title": "Whey e Castanhas", "items": "Whey Concentrado Baunilha (Cellforce) 2 dosadores (30g) · Castanha de caju 10 un (25g) · Melão 100g" }
+    ]
+  },
+  {
+    "id": "lanche-noite",
+    "time": "19:00",
+    "name": "Lanche da Noite",
+    "options": [
+      { "title": "Padrão", "items": "Goiabinha ou Bananinha 1 un (30g) · Castanha de caju 8 un (20g)" },
+      { "title": "Biscoito com Geleia", "items": "Biscoito de arroz 4 un (10g) · Geleia de frutas vermelhas (Linea) 1 colher de sopa (20g)" }
+    ]
+  },
+  {
+    "id": "jantar",
+    "time": "23:00",
+    "name": "Jantar",
+    "options": [
+      { "title": "Batata Doce com Frango", "items": "Batata doce (batata abóbora/jerimum/cenoura) 120g · Peito de frango sem pele grelhado 160g (ou Carne cozida/grelhada/assada com sal, 1 bife médio/110g) · Brócolis à vontade" },
+      { "title": "Rap10", "items": "Rap10 original 1 un (40g) · Peito de frango sem pele grelhado 100g · Queijo muçarela 1 fatia média (20g) · Molho de tomate 2 colheres de sopa cheias (32ml) · Chocolate amargo 70% cacau 16g" },
+      { "title": "Tapioca com Ovo e Queijo", "items": "Goma de tapioca 50g (ou Aveia 35g) · Ovo de galinha 1 un (50g) · Peito de frango sem pele grelhado 80g · Queijo muçarela 2 fatias médias (40g) — obs: pode ser feito em formato de crepioca ou aveioca" },
+      { "title": "Cuscuz com Frango", "items": "Cuscuz de milho cozido com sal 70g · Aveia 1 colher de sobremesa cheia (7g) (ou Semente de chia 1 colher de chá/6g) · Peito de frango sem pele grelhado 100g (ou Carne, 1 bife médio/110g) · Requeijão light Danúbio 1 colher de sopa cheia (30g) (ou Queijo muçarela 2 fatias médias/40g)" }
+    ]
+  }
+]

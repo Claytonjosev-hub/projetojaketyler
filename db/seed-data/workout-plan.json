@@ -1,0 +1,60 @@
+{
+  "A": {
+    "focus": "Costas, Peito, Ombro e Panturrilha",
+    "exercises": [
+      { "name": "Flexão Plantar no Leg 45 ou no Smith", "reps": "8-12", "tempo": "3210", "sets": [2, 3, 3, 3, 3, 4, 4, 4] },
+      { "name": "Puxada Frente Pegada Aberta", "reps": "8-12", "tempo": "2110", "sets": [2, 2, 2, 3, 3, 4, 4, 4] },
+      { "name": "Remada Cavalinho Com o Peito Apoiado Pegada Pronada Aberta", "reps": "8-12", "tempo": "2110", "sets": [2, 2, 3, 3, 3, 3, 4, 4] },
+      { "name": "Supino Inclinado 30 Graus com Halteres", "reps": "6-10", "tempo": "2110", "sets": [2, 3, 3, 3, 3, 3, 3, 4] },
+      { "name": "Crucifixo Máquina", "reps": "8-12", "tempo": "2110", "sets": [2, 2, 2, 2, 2, 2, 3, 3] },
+      { "name": "Abdução de Ombros no Cabo com Polia na Altura da Mão (Lengthened Position)", "reps": "12", "tempo": "2110", "sets": [3, 3, 3, 3, 4, 4, 4, 5] }
+    ]
+  },
+  "B": {
+    "focus": "Braço e Inferiores (Ênfase em Isquiotibiais)",
+    "exercises": [
+      { "name": "Rosca Simultânea no Banco Inclinado 45 graus", "reps": "8-12", "tempo": "2110", "sets": [2, 3, 4, 4, 4, 4, 4, 4] },
+      { "name": "Tríceps JM Press", "reps": "10-15", "tempo": "2110", "sets": [2, 2, 2, 3, 3, 4, 4, 4] },
+      { "name": "Stiff", "reps": "5-8", "tempo": "3210", "sets": [1, 2, 2, 2, 2, 3, 3, 4] },
+      { "name": "Cadeira Flexora", "reps": "8-12", "tempo": "2110", "sets": [2, 2, 3, 3, 3, 3, 4, 4] },
+      { "name": "Agachamento no Hack", "reps": "15-20", "tempo": "5110", "sets": [2, 2, 2, 2, 3, 3, 3, 3] },
+      { "name": "Cadeira Extensora", "reps": "12-15", "tempo": "3110", "sets": [2, 2, 2, 2, 2, 2, 3, 3] }
+    ]
+  },
+  "C": {
+    "focus": "Costas, Peito, Ombro e Abdômen",
+    "exercises": [
+      { "name": "Abdômen na Polia com Corda", "reps": "8-12", "tempo": "2111", "sets": [2, 2, 3, 3, 3, 3, 4, 4] },
+      { "name": "Supino Máquina", "reps": "8-12", "tempo": "2110", "sets": [2, 2, 2, 2, 3, 4, 4, 4] },
+      { "name": "Cross Over Polia Alta", "reps": "12-15", "tempo": "2111", "sets": [2, 2, 2, 2, 2, 2, 3, 4] },
+      { "name": "Barra Fixa Pegada Pronada", "reps": "6-10", "tempo": "2110", "sets": [2, 3, 3, 3, 3, 3, 3, 4] },
+      { "name": "Remada Curvada Pegada Pronada Aberta", "reps": "6-10", "tempo": "2111", "sets": [2, 2, 2, 3, 3, 3, 4, 4] },
+      { "name": "Abdução de Ombros em Y na Polia Baixa", "reps": "10-15", "tempo": "2110", "sets": [3, 3, 4, 4, 4, 5, 5, 5] }
+    ]
+  },
+  "D": {
+    "focus": "Braço e Inferiores (Ênfase em Quadríceps)",
+    "exercises": [
+      { "name": "Tríceps Polia Alta", "reps": "10-20", "tempo": "3110", "sets": [2, 2, 3, 3, 3, 4, 4, 4] },
+      { "name": "Rosca Polia Baixa Bilateral por Trás", "reps": "12-15", "tempo": "2110", "sets": [2, 2, 2, 3, 4, 4, 4, 4] },
+      { "name": "Agachamento no Smith", "reps": "6-12", "tempo": "4110", "sets": [2, 2, 2, 2, 3, 3, 4, 4] },
+      { "name": "Agachamento no Hack", "reps": "8-12", "tempo": "5110", "sets": [2, 2, 3, 3, 3, 3, 3, 4] },
+      { "name": "Afundo no Smith com Step", "reps": "8-12", "tempo": "3110", "sets": [1, 2, 2, 2, 2, 2, 2, 3] },
+      { "name": "Cadeira Flexora", "reps": "12-15", "tempo": "2110", "sets": [2, 2, 2, 2, 3, 3, 3, 3] },
+      { "name": "Stiff com Halteres", "reps": "8-12", "tempo": "", "sets": [2, 2, 2, 3, 3, 3, 3, 3] },
+      { "name": "Flexão Plantar no Leg 45 ou no Smith", "reps": "8-12", "tempo": "3210", "sets": [2, 2, 2, 2, 2, 2, 2, 2] }
+    ]
+  },
+  "E": {
+    "focus": "Costas, Peito, Ombro, Abdômen e Panturrilha",
+    "exercises": [
+      { "name": "Flexão Plantar no Leg 45 ou no Smith", "reps": "8-12", "tempo": "3210", "sets": [3, 3, 3, 3, 4, 4, 4, 4] },
+      { "name": "Remada Baixa Pegada Pronada Aberta", "reps": "8-12", "tempo": "2111", "sets": [2, 3, 3, 3, 3, 3, 3, 4] },
+      { "name": "Pull Over com Halteres", "reps": "8-12", "tempo": "2110", "sets": [2, 2, 2, 2, 3, 3, 3, 3] },
+      { "name": "Crucifixo Inclinado na Polia Baixa", "reps": "12-15", "tempo": "3110", "sets": [3, 3, 3, 3, 3, 3, 3, 4] },
+      { "name": "Desenvolvimento de Ombros no Smith", "reps": "6-10", "tempo": "2110", "sets": [2, 2, 3, 3, 3, 4, 4, 4] },
+      { "name": "Abdução de Ombros no Cabo com Polia na Altura da Mão (Lengthened Position)", "reps": "12", "tempo": "2110", "sets": [3, 3, 3, 4, 4, 4, 4, 5] },
+      { "name": "Abdômen na Polia com Corda", "reps": "8-12", "tempo": "2111", "sets": [3, 3, 3, 3, 3, 4, 4, 4] }
+    ]
+  }
+}
