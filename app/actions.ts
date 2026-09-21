@@ -64,10 +64,13 @@ export async function saveContent(
   let parsed: unknown;
   try {
     parsed = JSON.parse(jsonText);
-  } catch {
-    return { ok: false, error: "JSON inválido — verifique a sintaxe." };
+    await setContent(key, parsed as ContentShape[typeof key]);
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      return { ok: false, error: "JSON inválido — verifique a sintaxe." };
+    }
+    return { ok: false, error: "Erro ao salvar — tente novamente." };
   }
-  await setContent(key, parsed as ContentShape[typeof key]);
   revalidatePath("/");
   revalidatePath("/progress");
   revalidatePath("/settings");
