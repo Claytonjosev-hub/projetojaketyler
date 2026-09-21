@@ -62,6 +62,7 @@ export default async function HojePage({
 
       {pattern.trainingBlock ? (
         <TrainingCard
+          key={date}
           date={date}
           block={pattern.trainingBlock}
           focus={workoutPlan[pattern.trainingBlock].focus}
@@ -74,8 +75,8 @@ export default async function HojePage({
         <ActivityPicker date={date} pattern={pattern} />
       )}
 
-      <MealsList date={date} meals={meals} mealLogs={dailyLog?.meals ?? {}} />
-      <SupplementsList date={date} supplements={supplements} supplementLogs={dailyLog?.supplements ?? {}} />
+      <MealsList key={date} date={date} meals={meals} mealLogs={dailyLog?.meals ?? {}} />
+      <SupplementsList key={date} date={date} supplements={supplements} supplementLogs={dailyLog?.supplements ?? {}} />
     </main>
   );
 }
