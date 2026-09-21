@@ -54,6 +54,16 @@ export default async function ProgressPage() {
 
   const completionRate = elapsedCount === 0 ? 0 : Math.round((completedCount / elapsedCount) * 100);
 
+  const currentMonth = today.slice(0, 7);
+  const monthDays = days.filter((d) => d.date.slice(0, 7) === currentMonth);
+  const monthElapsed = monthDays.filter((d) => d.status !== "future").length;
+  const monthCompleted = monthDays.filter((d) => d.status === "complete").length;
+  const monthRate = monthElapsed === 0 ? 0 : Math.round((monthCompleted / monthElapsed) * 100);
+  const monthLabel = new Date(`${today}T00:00:00Z`).toLocaleDateString("pt-BR", {
+    month: "long",
+    year: "numeric",
+  });
+
   return (
     <main className="space-y-4 p-4">
       <h1 className="text-xl font-semibold">Progresso</h1>
@@ -72,6 +82,14 @@ export default async function ProgressPage() {
         <p className="text-xs text-neutral-500">Sequência atual</p>
         <p className="text-lg font-semibold">{currentStreak} {currentStreak === 1 ? "dia" : "dias"}</p>
       </Card>
+
+      {monthElapsed > 0 && (
+        <Card>
+          <p className="text-xs capitalize text-neutral-500">{monthLabel}</p>
+          <p className="mb-1 text-lg font-semibold">{monthCompleted}/{monthElapsed} ({monthRate}%)</p>
+          <ProgressBar value={monthCompleted} max={monthElapsed} />
+        </Card>
+      )}
     </main>
   );
 }
