@@ -85,6 +85,7 @@ export default async function HojePage({
           date={date}
           label={workoutBlock.label}
           focus={workoutBlock.focus}
+          cardio={pattern.activity}
           exercises={workoutBlock.exercises}
           exercisesDone={dailyLog?.exercises_done ?? {}}
           trainingDone={dailyLog?.training_done ?? false}
@@ -92,10 +93,6 @@ export default async function HojePage({
         />
       ) : (
         <ActivityPicker date={date} pattern={pattern} trainingDone={dailyLog?.training_done ?? false} />
-      )}
-
-      {pattern.activity && !pattern.activityEditable && (
-        <p className="px-1 text-sm text-ink-dim">+ {pattern.activity}</p>
       )}
 
       <MealsList key={date} date={date} meals={meals} mealLogs={dailyLog?.meals ?? {}} />

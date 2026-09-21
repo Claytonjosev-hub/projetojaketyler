@@ -11,6 +11,7 @@ export function TrainingCard({
   date,
   label,
   focus,
+  cardio,
   exercises,
   exercisesDone,
   trainingDone,
@@ -19,6 +20,7 @@ export function TrainingCard({
   date: string;
   label: string;
   focus: string;
+  cardio: string | null;
   exercises: Exercise[];
   exercisesDone: Record<string, boolean>;
   trainingDone: boolean;
@@ -54,7 +56,10 @@ export function TrainingCard({
           <div>
             <p className="text-xs font-medium text-ink-faint">Treino de hoje</p>
             <p className="mt-1 text-3xl font-extrabold leading-none tracking-tight">{label}</p>
-            <p className="mt-1.5 text-sm text-ink-dim">{focus}</p>
+            <p className="mt-1.5 text-sm text-ink-dim">
+              {focus}
+              {cardio ? ` · ${cardio}` : ""}
+            </p>
           </div>
           <Chip
             label={trainingDone ? "Feito" : `${doneCount}/${exercises.length}`}

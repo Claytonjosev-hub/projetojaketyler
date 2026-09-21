@@ -2,7 +2,7 @@ import { Card } from "./Card";
 import { getContent, getDailyLog } from "@/lib/db";
 import { getDayPattern, getProgramDay, isDayComplete } from "@/lib/program";
 
-const WEEKDAY_LABELS = ["S", "T", "Q", "Q", "S", "S", "D"];
+const WEEKDAY_LABELS = ["seg", "ter", "qua", "qui", "sex", "sáb", "dom"];
 
 function isoDateNDaysFrom(base: string, offset: number): string {
   const d = new Date(`${base}T00:00:00Z`);
