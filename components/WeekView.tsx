@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Card } from "./Card";
 import { Chip } from "./Chip";
 import { getContent, getDailyLog } from "@/lib/db";
@@ -41,7 +40,11 @@ export async function WeekView({ today }: { today: string }) {
       <p className="mb-2 font-medium">Semana {getWeekNumber(todayProgramDay)}</p>
       <div className="grid grid-cols-7 gap-1.5">
         {days.map((day) => (
-          <Link key={day.date} href={day.isToday ? "/" : `/?date=${day.date}`} className="text-center">
+          <a
+            key={day.date}
+            href={day.isToday ? "/" : `/?date=${day.date}`}
+            className="text-center"
+          >
             <p className="text-xs text-neutral-400">{day.label}</p>
             <div
               className={`mx-auto mt-1 flex h-8 w-8 items-center justify-center rounded-full text-xs font-medium ${
@@ -54,7 +57,7 @@ export async function WeekView({ today }: { today: string }) {
             >
               {day.pattern.trainingBlock ?? "•"}
             </div>
-          </Link>
+          </a>
         ))}
       </div>
       {days.some((d) => !d.pattern.trainingBlock && d.pattern.activity) && (
