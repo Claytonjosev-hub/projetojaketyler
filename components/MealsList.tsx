@@ -16,15 +16,30 @@ export function MealsList({
   mealLogs: Record<string, MealLogEntry>;
 }) {
   const [logs, setLogs] = useState(mealLogs);
+  const [errorMealId, setErrorMealId] = useState<string | null>(null);
 
   async function handleDone(mealId: string, done: boolean) {
-    setLogs((prev) => ({ ...prev, [mealId]: { ...(prev[mealId] ?? { chosenOptionIndex: 0, done: false }), done } }));
-    await toggleMealDone(date, mealId, done);
+    const previous = logs[mealId] ?? { chosenOptionIndex: 0, done: false };
+    setErrorMealId(null);
+    setLogs((prev) => ({ ...prev, [mealId]: { ...previous, done } }));
+    try {
+      await toggleMealDone(date, mealId, done);
+    } catch {
+      setLogs((prev) => ({ ...prev, [mealId]: previous }));
+      setErrorMealId(mealId);
+    }
   }
 
   async function handleOption(mealId: string, optionIndex: number) {
-    setLogs((prev) => ({ ...prev, [mealId]: { ...(prev[mealId] ?? { chosenOptionIndex: 0, done: false }), chosenOptionIndex: optionIndex } }));
-    await chooseMealOption(date, mealId, optionIndex);
+    const previous = logs[mealId] ?? { chosenOptionIndex: 0, done: false };
+    setErrorMealId(null);
+    setLogs((prev) => ({ ...prev, [mealId]: { ...previous, chosenOptionIndex: optionIndex } }));
+    try {
+      await chooseMealOption(date, mealId, optionIndex);
+    } catch {
+      setLogs((prev) => ({ ...prev, [mealId]: previous }));
+      setErrorMealId(mealId);
+    }
   }
 
   return (
@@ -49,8 +64,15 @@ export function MealsList({
                 </select>
               )}
             </div>
-            <p className="mb-1 text-sm text-neutral-600">{option.items}</p>
+            {option ? (
+              <p className="mb-1 text-sm text-neutral-600">{option.items}</p>
+            ) : (
+              <p className="mb-1 text-sm text-neutral-400">Nenhuma opção configurada para esta refeição.</p>
+            )}
             <Checkbox checked={log.done} onChange={(checked) => handleDone(meal.id, checked)} label="Refeição feita" />
+            {errorMealId === meal.id && (
+              <p className="text-xs text-red-600">Erro ao salvar — tente novamente.</p>
+            )}
           </div>
         );
       })}

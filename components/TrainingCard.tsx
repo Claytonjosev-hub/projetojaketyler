@@ -26,10 +26,18 @@ export function TrainingCard({
 }) {
   const [open, setOpen] = useState(false);
   const [doneMap, setDoneMap] = useState(exercisesDone);
+  const [errorIndex, setErrorIndex] = useState<number | null>(null);
 
   async function handleToggle(index: number, checked: boolean) {
+    const previous = doneMap[String(index)] === true;
+    setErrorIndex(null);
     setDoneMap((prev) => ({ ...prev, [String(index)]: checked }));
-    await toggleExercise(date, index, checked);
+    try {
+      await toggleExercise(date, index, checked);
+    } catch {
+      setDoneMap((prev) => ({ ...prev, [String(index)]: previous }));
+      setErrorIndex(index);
+    }
   }
 
   return (
@@ -44,12 +52,16 @@ export function TrainingCard({
       {open && (
         <div className="mt-3 border-t border-neutral-100 pt-3" onClick={(e) => e.stopPropagation()}>
           {exercises.map((exercise, index) => (
-            <Checkbox
-              key={exercise.name}
-              checked={doneMap[String(index)] === true}
-              onChange={(checked) => handleToggle(index, checked)}
-              label={`${exercise.name} — ${exercise.sets}x ${exercise.reps}${exercise.tempo ? ` (tempo ${exercise.tempo})` : ""}`}
-            />
+            <div key={exercise.name}>
+              <Checkbox
+                checked={doneMap[String(index)] === true}
+                onChange={(checked) => handleToggle(index, checked)}
+                label={`${exercise.name} — ${exercise.sets}x ${exercise.reps}${exercise.tempo ? ` (tempo ${exercise.tempo})` : ""}`}
+              />
+              {errorIndex === index && (
+                <p className="text-xs text-red-600">Erro ao salvar — tente novamente.</p>
+              )}
+            </div>
           ))}
         </div>
       )}
