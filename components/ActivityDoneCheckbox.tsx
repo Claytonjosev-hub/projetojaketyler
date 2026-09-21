@@ -29,7 +29,7 @@ export function ActivityDoneCheckbox({
   return (
     <div>
       <Checkbox checked={done} onChange={handleToggle} label="Atividade concluída" />
-      {error && <p className="text-xs text-red-600">{error}</p>}
+      {error && <p className="text-xs text-red-400">{error}</p>}
     </div>
   );
 }

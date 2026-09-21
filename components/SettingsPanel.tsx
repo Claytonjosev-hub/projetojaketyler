@@ -18,6 +18,11 @@ export function SettingsPanel({
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
 
+  function handleChange(value: string) {
+    setText(value);
+    setSaved(false);
+  }
+
   async function handleSave() {
     setError(null);
     setSaved(false);
@@ -31,18 +36,19 @@ export function SettingsPanel({
 
   return (
     <Card>
-      <p className="mb-2 font-medium">{title}</p>
+      <p className="mb-2 font-display text-lg font-medium text-paper">{title}</p>
       <textarea
         value={text}
-        onChange={(e) => setText(e.target.value)}
+        onChange={(e) => handleChange(e.target.value)}
         rows={10}
-        className="w-full rounded-lg border border-neutral-200 bg-neutral-50 p-2 font-mono text-xs"
+        spellCheck={false}
+        className="w-full rounded-md border border-line-bright bg-ink-field p-2 font-mono text-xs text-paper-dim focus:border-ember focus:outline-none"
       />
-      {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
-      {saved && <p className="mt-1 text-sm text-emerald-600">Salvo.</p>}
+      {error && <p className="mt-1 text-sm text-red-400">{error}</p>}
+      {saved && <p className="mt-1 text-sm text-moss">Salvo.</p>}
       <button
         onClick={handleSave}
-        className="mt-2 rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white"
+        className="mt-2 min-h-11 rounded-md bg-ember px-4 text-sm font-medium text-ink active:opacity-80"
       >
         Salvar
       </button>

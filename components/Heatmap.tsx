@@ -10,7 +10,11 @@ export interface HeatmapDay {
 export function Heatmap({ days }: { days: HeatmapDay[] }) {
   const weeks = Array.from({ length: 8 }, (_, i) => i + 1);
   const colorFor = (status: HeatmapDay["status"]) =>
-    status === "complete" ? "bg-emerald-500" : status === "incomplete" ? "bg-neutral-300" : "bg-neutral-100";
+    status === "complete"
+      ? "bg-moss"
+      : status === "incomplete"
+        ? "bg-line-bright"
+        : "border border-line bg-transparent";
 
   return (
     <div>

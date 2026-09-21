@@ -1,17 +1,53 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --ink: #14120f;
+  --ink-raised: #201c16;
+  --ink-field: #1a1712;
+  --paper: #ede6d9;
+  --paper-dim: #a39c8c;
+  --paper-faint: #6f6858;
+  --line: #38342c;
+  --line-bright: #4a4436;
+  --ember: #e0602a;
+  --ember-soft: #e0602a26;
+  --moss: #8fae76;
+  --moss-soft: #8fae7622;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-ink: var(--ink);
+  --color-ink-raised: var(--ink-raised);
+  --color-ink-field: var(--ink-field);
+  --color-paper: var(--paper);
+  --color-paper-dim: var(--paper-dim);
+  --color-paper-faint: var(--paper-faint);
+  --color-line: var(--line);
+  --color-line-bright: var(--line-bright);
+  --color-ember: var(--ember);
+  --color-ember-soft: var(--ember-soft);
+  --color-moss: var(--moss);
+  --color-moss-soft: var(--moss-soft);
+  --font-display: var(--font-barlow-condensed);
+  --font-body: var(--font-barlow);
+}
+
+html {
+  color-scheme: dark;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* Tap highlight tuned to the accent instead of the browser default blue flash */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+input,
+select,
+textarea {
+  font: inherit;
 }

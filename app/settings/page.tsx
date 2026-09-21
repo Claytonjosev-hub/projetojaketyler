@@ -16,9 +16,9 @@ export default async function SettingsPage() {
   const data = await Promise.all(PANELS.map((panel) => getContent(panel.key)));
 
   return (
-    <main className="space-y-4 p-4">
-      <h1 className="text-xl font-semibold">Config</h1>
-      <p className="text-sm text-neutral-500">
+    <main className="space-y-4 p-4 pt-6">
+      <h1 className="font-display text-3xl font-semibold leading-none text-paper">Config</h1>
+      <p className="text-sm text-paper-dim">
         Cole um JSON novo em qualquer painel e salve — sem precisar mexer em código.
       </p>
       {PANELS.map((panel, i) => (

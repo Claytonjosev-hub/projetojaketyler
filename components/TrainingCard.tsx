@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { Card } from "./Card";
-import { Checkbox } from "./Checkbox";
 import { Chip } from "./Chip";
+import { ProgressBar } from "./ProgressBar";
 import { toggleExercise } from "@/app/actions";
 import type { ExerciseForWeek } from "@/lib/program";
 
@@ -40,29 +40,57 @@ export function TrainingCard({
     }
   }
 
+  const doneCount = exercises.filter((_, i) => doneMap[String(i)] === true).length;
+
   return (
-    <Card onClick={() => setOpen((v) => !v)}>
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm text-neutral-500">{label}</p>
-          <p className="font-medium">Treino {block} — {focus}</p>
+    <Card onClick={() => setOpen((v) => !v)} className="!p-0 overflow-hidden">
+      <div className="p-4">
+        <div className="flex items-center justify-between">
+          <p className="text-xs text-paper-faint">{label}</p>
+          <Chip label={trainingDone ? "Concluído" : "Pendente"} tone={trainingDone ? "success" : "neutral"} />
         </div>
-        <Chip label={trainingDone ? "Concluído" : "Pendente"} tone={trainingDone ? "success" : "neutral"} />
+        <p className="mt-1 font-display text-4xl font-semibold leading-none tracking-tight text-paper">
+          Treino {block}
+        </p>
+        <p className="mt-1 text-sm text-paper-dim">{focus}</p>
+        <div className="mt-4">
+          <ProgressBar value={doneCount} max={exercises.length} />
+          <p className="mt-1.5 text-xs text-paper-faint">
+            {doneCount}/{exercises.length} exercícios{open ? "" : " · toque para abrir"}
+          </p>
+        </div>
       </div>
       {open && (
-        <div className="mt-3 border-t border-neutral-100 pt-3" onClick={(e) => e.stopPropagation()}>
-          {exercises.map((exercise, index) => (
-            <div key={exercise.name}>
-              <Checkbox
-                checked={doneMap[String(index)] === true}
-                onChange={(checked) => handleToggle(index, checked)}
-                label={`${exercise.name} — ${exercise.sets}x ${exercise.reps}${exercise.tempo ? ` (tempo ${exercise.tempo})` : ""}`}
-              />
-              {errorIndex === index && (
-                <p className="text-xs text-red-600">Erro ao salvar — tente novamente.</p>
-              )}
-            </div>
-          ))}
+        <div className="border-t border-line" onClick={(e) => e.stopPropagation()}>
+          {exercises.map((exercise, index) => {
+            const checked = doneMap[String(index)] === true;
+            return (
+              <div key={exercise.name} className="border-t border-line px-4 py-3 first:border-t-0">
+                <label className="flex min-h-11 cursor-pointer items-start gap-3 active:opacity-70">
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={(e) => handleToggle(index, e.target.checked)}
+                    className="mt-0.5 h-6 w-6 shrink-0 rounded border-2 border-line-bright bg-transparent accent-ember"
+                  />
+                  <span className="flex-1">
+                    <span className={checked ? "text-paper-faint line-through" : "text-paper"}>
+                      {exercise.name}
+                    </span>
+                    <span className="block text-xs text-paper-dim">
+                      {exercise.sets}x {exercise.reps}
+                      {exercise.tempo ? (
+                        <span className="ml-2 font-display tracking-wide text-ember">{exercise.tempo}</span>
+                      ) : null}
+                    </span>
+                  </span>
+                </label>
+                {errorIndex === index && (
+                  <p className="ml-9 text-xs text-red-400">Erro ao salvar — tente novamente.</p>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
     </Card>

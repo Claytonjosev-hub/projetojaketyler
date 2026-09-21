@@ -37,23 +37,25 @@ export async function WeekView({ today }: { today: string }) {
 
   return (
     <Card>
-      <p className="mb-2 font-medium">Semana {getWeekNumber(todayProgramDay)}</p>
-      <div className="grid grid-cols-7 gap-1.5">
+      <p className="mb-3 font-display text-lg font-medium text-paper">
+        Semana {getWeekNumber(todayProgramDay)}
+      </p>
+      <div className="grid grid-cols-7 gap-1">
         {days.map((day) => (
           <a
             key={day.date}
             href={day.isToday ? "/" : `/?date=${day.date}`}
-            className="text-center"
+            className="flex flex-col items-center gap-1.5 py-1"
           >
-            <p className="text-xs text-neutral-400">{day.label}</p>
+            <p className="text-[11px] text-paper-faint">{day.label}</p>
             <div
-              className={`mx-auto mt-1 flex h-8 w-8 items-center justify-center rounded-full text-xs font-medium ${
+              className={`flex h-10 w-10 items-center justify-center rounded-full font-display text-sm font-semibold ${
                 day.complete
-                  ? "bg-emerald-500 text-white"
+                  ? "bg-moss text-ink"
                   : day.programDay > todayProgramDay
-                    ? "bg-neutral-100 text-neutral-300"
-                    : "bg-neutral-200 text-neutral-600"
-              } ${day.isToday ? "ring-2 ring-neutral-900 ring-offset-1" : ""}`}
+                    ? "bg-transparent text-paper-faint/50"
+                    : "bg-ink-field text-paper-dim"
+              } ${day.isToday ? "ring-2 ring-ember ring-offset-2 ring-offset-ink-raised" : ""}`}
             >
               {day.pattern.trainingBlock ?? "•"}
             </div>
@@ -61,8 +63,8 @@ export async function WeekView({ today }: { today: string }) {
         ))}
       </div>
       {days.some((d) => !d.pattern.trainingBlock && d.pattern.activity) && (
-        <div className="mt-2">
-          <Chip label="Legenda: letra = bloco de treino, • = dia de atividade" tone="muted" />
+        <div className="mt-3">
+          <Chip label="letra = treino · ponto = dia de atividade" tone="muted" />
         </div>
       )}
     </Card>

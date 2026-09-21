@@ -59,36 +59,44 @@ export default async function ProgressPage() {
   const monthElapsed = monthDays.filter((d) => d.status !== "future").length;
   const monthCompleted = monthDays.filter((d) => d.status === "complete").length;
   const monthRate = monthElapsed === 0 ? 0 : Math.round((monthCompleted / monthElapsed) * 100);
-  const monthLabel = new Date(`${today}T00:00:00Z`).toLocaleDateString("pt-BR", {
+  const monthLabelRaw = new Date(`${today}T00:00:00Z`).toLocaleDateString("pt-BR", {
     month: "long",
     year: "numeric",
   });
+  const monthLabel = monthLabelRaw.charAt(0).toUpperCase() + monthLabelRaw.slice(1);
 
   return (
-    <main className="space-y-4 p-4">
-      <h1 className="text-xl font-semibold">Progresso</h1>
+    <main className="space-y-4 p-4 pt-6">
+      <h1 className="font-display text-3xl font-semibold leading-none text-paper">Progresso</h1>
 
       <Card>
         <Heatmap days={days} />
       </Card>
 
-      <Card>
-        <p className="text-xs text-neutral-500">Dias completos / dias decorridos</p>
-        <p className="mb-1 text-lg font-semibold">{completedCount}/{elapsedCount} ({completionRate}%)</p>
-        <ProgressBar value={completedCount} max={elapsedCount || 1} />
-      </Card>
-
-      <Card>
-        <p className="text-xs text-neutral-500">Sequência atual</p>
-        <p className="text-lg font-semibold">{currentStreak} {currentStreak === 1 ? "dia" : "dias"}</p>
-      </Card>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="rounded-lg border border-line bg-ink-raised p-3">
+          <p className="text-xs text-paper-faint">Dias completos</p>
+          <p className="mb-2 font-display text-2xl font-semibold text-paper">
+            {completedCount}/{elapsedCount} <span className="text-base text-paper-dim">({completionRate}%)</span>
+          </p>
+          <ProgressBar value={completedCount} max={elapsedCount || 1} />
+        </div>
+        <div className="rounded-lg border border-line bg-ink-raised p-3">
+          <p className="text-xs text-paper-faint">Sequência atual</p>
+          <p className="font-display text-2xl font-semibold text-paper">
+            {currentStreak} <span className="text-base text-paper-dim">{currentStreak === 1 ? "dia" : "dias"}</span>
+          </p>
+        </div>
+      </div>
 
       {monthElapsed > 0 && (
-        <Card>
-          <p className="text-xs capitalize text-neutral-500">{monthLabel}</p>
-          <p className="mb-1 text-lg font-semibold">{monthCompleted}/{monthElapsed} ({monthRate}%)</p>
+        <div className="rounded-lg border border-line bg-ink-raised p-3">
+          <p className="text-xs text-paper-faint">{monthLabel}</p>
+          <p className="mb-2 font-display text-2xl font-semibold text-paper">
+            {monthCompleted}/{monthElapsed} <span className="text-base text-paper-dim">({monthRate}%)</span>
+          </p>
           <ProgressBar value={monthCompleted} max={monthElapsed} />
-        </Card>
+        </div>
       )}
     </main>
   );

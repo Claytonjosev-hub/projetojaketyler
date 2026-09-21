@@ -15,6 +15,8 @@ import {
 } from "@/lib/program";
 import { setActivityChoice } from "@/app/actions";
 
+const WEEKDAY_NAMES = ["segunda", "terça", "quarta", "quinta", "sexta", "sábado", "domingo"];
+
 export default async function HojePage({
   searchParams,
 }: {
@@ -49,13 +51,16 @@ export default async function HojePage({
   const daysRemaining = Math.max(0, totalProgramDays - programDay + 1);
   const weeksRemaining = Math.max(0, program.durationWeeks - weekNumber);
 
+  const jsDay = new Date(`${date}T00:00:00Z`).getUTCDay();
+  const dayOfWeek = jsDay === 0 ? 6 : jsDay - 1;
+
   return (
-    <main className="space-y-4 p-4">
+    <main className="space-y-4 p-4 pt-6">
       <div>
-        <h1 className="text-xl font-semibold">
-          {date === today ? "Hoje" : new Date(`${date}T00:00:00Z`).toLocaleDateString("pt-BR")}
+        <h1 className="font-display text-3xl font-semibold leading-none text-paper">
+          {date === today ? "Hoje" : WEEKDAY_NAMES[dayOfWeek]}
         </h1>
-        <p className="text-sm text-neutral-500">
+        <p className="mt-1 text-sm text-paper-dim">
           Semana {weekNumber} de {program.durationWeeks}
           {weeksRemaining > 0
             ? ` · faltam ${weeksRemaining} ${weeksRemaining === 1 ? "semana" : "semanas"} (${daysRemaining} dias)`
@@ -64,14 +69,14 @@ export default async function HojePage({
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <div className="rounded-2xl border border-neutral-200 bg-white p-3">
-          <p className="text-xs text-neutral-500">Refeições hoje</p>
-          <p className="mb-1 text-lg font-semibold">{mealsDoneCount}/{meals.length}</p>
+        <div className="rounded-lg border border-line bg-ink-raised p-3">
+          <p className="text-xs text-paper-faint">Refeições hoje</p>
+          <p className="mb-2 font-display text-2xl font-semibold text-paper">{mealsDoneCount}/{meals.length}</p>
           <ProgressBar value={mealsDoneCount} max={meals.length} />
         </div>
-        <div className="rounded-2xl border border-neutral-200 bg-white p-3">
-          <p className="text-xs text-neutral-500">Treinos na semana</p>
-          <p className="mb-1 text-lg font-semibold">{dailyLog?.training_done ? 1 : 0}/{trainingDaysThisWeek}</p>
+        <div className="rounded-lg border border-line bg-ink-raised p-3">
+          <p className="text-xs text-paper-faint">Treinos na semana</p>
+          <p className="mb-2 font-display text-2xl font-semibold text-paper">{dailyLog?.training_done ? 1 : 0}/{trainingDaysThisWeek}</p>
           <ProgressBar value={dailyLog?.training_done ? 1 : 0} max={trainingDaysThisWeek} />
         </div>
       </div>
@@ -115,9 +120,9 @@ async function ActivityPicker({
   }
   const showDoneCheckbox = pattern.activity !== null && !isRestActivity(pattern.activity);
   return (
-    <div className="rounded-2xl border border-neutral-200 bg-white p-4">
-      <form action={pick}>
-        <p className="mb-2 font-medium">Atividade de hoje</p>
+    <div className="rounded-lg border border-line bg-ink-raised p-4">
+      <p className="font-display text-lg font-medium text-paper">Atividade de hoje</p>
+      <form action={pick} className="mt-2">
         <div className="flex flex-wrap gap-2">
           {pattern.activityOptions.map((option: string) => (
             <button
@@ -125,8 +130,10 @@ async function ActivityPicker({
               type="submit"
               name="activity"
               value={option}
-              className={`rounded-full px-3 py-1.5 text-sm ${
-                pattern.activity === option ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-700"
+              className={`min-h-11 rounded-full px-4 text-sm transition-colors ${
+                pattern.activity === option
+                  ? "bg-ember text-ink font-medium"
+                  : "border border-line-bright bg-ink-field text-paper-dim active:bg-ink"
               }`}
             >
               {option}
@@ -135,7 +142,7 @@ async function ActivityPicker({
         </div>
       </form>
       {showDoneCheckbox && (
-        <div className="mt-3 border-t border-neutral-100 pt-3">
+        <div className="mt-3 border-t border-line pt-3">
           <ActivityDoneCheckbox key={date} date={date} trainingDone={trainingDone} />
         </div>
       )}
