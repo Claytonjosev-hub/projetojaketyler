@@ -45,13 +45,22 @@ export default async function HojePage({
   const mealsDoneCount = meals.filter((m) => dailyLog?.meals[m.id]?.done).length;
   const trainingDaysThisWeek = weekPattern.filter((p) => p.trainingBlock).length;
 
+  const totalProgramDays = program.durationWeeks * 7;
+  const daysRemaining = Math.max(0, totalProgramDays - programDay + 1);
+  const weeksRemaining = Math.max(0, program.durationWeeks - weekNumber);
+
   return (
     <main className="space-y-4 p-4">
       <div>
         <h1 className="text-xl font-semibold">
           {date === today ? "Hoje" : new Date(`${date}T00:00:00Z`).toLocaleDateString("pt-BR")}
         </h1>
-        <p className="text-sm text-neutral-500">Semana {weekNumber} de 8</p>
+        <p className="text-sm text-neutral-500">
+          Semana {weekNumber} de {program.durationWeeks}
+          {weeksRemaining > 0
+            ? ` · faltam ${weeksRemaining} ${weeksRemaining === 1 ? "semana" : "semanas"} (${daysRemaining} dias)`
+            : " · última semana!"}
+        </p>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
