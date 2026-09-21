@@ -1,9 +1,8 @@
 import { Card } from "./Card";
-import { Chip } from "./Chip";
 import { getContent, getDailyLog } from "@/lib/db";
-import { getDayPattern, getProgramDay, getWeekNumber, isDayComplete } from "@/lib/program";
+import { getDayPattern, getProgramDay, isDayComplete } from "@/lib/program";
 
-const WEEKDAY_LABELS = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
+const WEEKDAY_LABELS = ["S", "T", "Q", "Q", "S", "S", "D"];
 
 function isoDateNDaysFrom(base: string, offset: number): string {
   const d = new Date(`${base}T00:00:00Z`);
@@ -11,10 +10,11 @@ function isoDateNDaysFrom(base: string, offset: number): string {
   return d.toISOString().slice(0, 10);
 }
 
-export async function WeekView({ today }: { today: string }) {
-  const [program, weekPattern, meals, supplements] = await Promise.all([
+export async function WeekView({ today, viewing }: { today: string; viewing: string }) {
+  const [program, weekPattern, workoutPlan, meals, supplements] = await Promise.all([
     getContent("program"),
     getContent("weekPattern"),
+    getContent("workoutPlan"),
     getContent("meals"),
     getContent("supplements"),
   ]);
@@ -30,43 +30,40 @@ export async function WeekView({ today }: { today: string }) {
       const dailyLog = await getDailyLog(date);
       const pattern = getDayPattern(date, weekPattern, dailyLog);
       const complete = isDayComplete({ date, today, dailyLog, pattern, meals, supplements });
-      const programDay = getProgramDay(date, program.startDate);
-      return { date, label: WEEKDAY_LABELS[i], pattern, complete, isToday: date === today, programDay };
+      const block = pattern.trainingBlock ? workoutPlan.blocks[pattern.trainingBlock] : null;
+      return {
+        date,
+        label: WEEKDAY_LABELS[i],
+        mark: block?.short ?? "–",
+        complete,
+        isViewing: date === viewing,
+        isFuture: getProgramDay(date, program.startDate) > todayProgramDay,
+      };
     }),
   );
 
   return (
-    <Card>
-      <p className="mb-3 font-display text-lg font-medium text-paper">
-        Semana {getWeekNumber(todayProgramDay)}
-      </p>
-      <div className="grid grid-cols-7 gap-1">
+    <Card className="px-2 py-3">
+      <div className="grid grid-cols-7">
         {days.map((day) => (
-          <a
-            key={day.date}
-            href={day.isToday ? "/" : `/?date=${day.date}`}
-            className="flex flex-col items-center gap-1.5 py-1"
-          >
-            <p className="text-[11px] text-paper-faint">{day.label}</p>
-            <div
-              className={`flex h-10 w-10 items-center justify-center rounded-full font-display text-sm font-semibold ${
-                day.complete
-                  ? "bg-moss text-ink"
-                  : day.programDay > todayProgramDay
-                    ? "bg-transparent text-paper-faint/50"
-                    : "bg-ink-field text-paper-dim"
-              } ${day.isToday ? "ring-2 ring-ember ring-offset-2 ring-offset-ink-raised" : ""}`}
+          <a key={day.date} href={`/?date=${day.date}`} className="flex flex-col items-center gap-2 py-1">
+            <span className="text-[11px] font-medium text-ink-faint">{day.label}</span>
+            <span
+              className={`flex h-9 w-9 items-center justify-center rounded-full text-[13px] font-semibold ${
+                day.isViewing
+                  ? "bg-ink text-surface"
+                  : day.complete
+                    ? "bg-done-soft text-done"
+                    : day.isFuture
+                      ? "text-ink-faint"
+                      : "bg-canvas text-ink-dim"
+              }`}
             >
-              {day.pattern.trainingBlock ?? "•"}
-            </div>
+              {day.mark}
+            </span>
           </a>
         ))}
       </div>
-      {days.some((d) => !d.pattern.trainingBlock && d.pattern.activity) && (
-        <div className="mt-3">
-          <Chip label="letra = treino · ponto = dia de atividade" tone="muted" />
-        </div>
-      )}
     </Card>
   );
 }

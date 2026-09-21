@@ -5,17 +5,16 @@ import { TrainingCard } from "@/components/TrainingCard";
 import { WeekView } from "@/components/WeekView";
 import { ActivityDoneCheckbox } from "@/components/ActivityDoneCheckbox";
 import { getContent, getDailyLog } from "@/lib/db";
-import {
-  getDayPattern,
-  getExercisesForWeek,
-  getProgramDay,
-  getWeekNumber,
-  isRestActivity,
-  todayIso,
-} from "@/lib/program";
+import { getDayPattern, getProgramDay, getWeekNumber, isRestActivity, todayIso } from "@/lib/program";
 import { setActivityChoice } from "@/app/actions";
 
-const WEEKDAY_NAMES = ["segunda", "terça", "quarta", "quinta", "sexta", "sábado", "domingo"];
+const WEEKDAY_NAMES = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
+const MONTHS_SHORT = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+
+function formatDayMonth(date: string): string {
+  const [, month, day] = date.split("-").map(Number);
+  return `${day} ${MONTHS_SHORT[month - 1]}`;
+}
 
 export default async function HojePage({
   searchParams,
@@ -39,67 +38,73 @@ export default async function HojePage({
   const weekNumber = getWeekNumber(programDay);
   const pattern = getDayPattern(date, weekPattern, dailyLog);
 
-  const workoutBlock = pattern.trainingBlock ? workoutPlan[pattern.trainingBlock] : null;
+  const workoutBlock = pattern.trainingBlock ? workoutPlan.blocks[pattern.trainingBlock] : null;
   if (pattern.trainingBlock && !workoutBlock) {
-    throw new Error(`workoutPlan has no entry for block "${pattern.trainingBlock}"`);
+    throw new Error(`workoutPlan has no block "${pattern.trainingBlock}"`);
   }
-
-  const mealsDoneCount = meals.filter((m) => dailyLog?.meals[m.id]?.done).length;
-  const trainingDaysThisWeek = weekPattern.filter((p) => p.trainingBlock).length;
-
-  const totalProgramDays = program.durationWeeks * 7;
-  const daysRemaining = Math.max(0, totalProgramDays - programDay + 1);
-  const weeksRemaining = Math.max(0, program.durationWeeks - weekNumber);
 
   const jsDay = new Date(`${date}T00:00:00Z`).getUTCDay();
   const dayOfWeek = jsDay === 0 ? 6 : jsDay - 1;
 
+  const daysRemaining = Math.max(0, program.durationWeeks * 7 - programDay + 1);
+
+  const requiresTraining = Boolean(pattern.trainingBlock) || !isRestActivity(pattern.activity);
+  const mealsDone = meals.filter((m) => dailyLog?.meals[m.id]?.done).length;
+  const supplementsDone = supplements.filter((s) => dailyLog?.supplements[s.id]).length;
+  const dayTotal = meals.length + supplements.length + (requiresTraining ? 1 : 0);
+  const dayDone =
+    mealsDone + supplementsDone + (requiresTraining && dailyLog?.training_done ? 1 : 0);
+
   return (
-    <main className="space-y-4 p-4 pt-6">
-      <div>
-        <h1 className="font-display text-3xl font-semibold leading-none text-paper">
+    <main className="mx-auto max-w-lg space-y-3 p-4 pt-8">
+      <header className="px-1 pb-1">
+        <h1 className="text-[32px] font-extrabold leading-none tracking-tight">
           {date === today ? "Hoje" : WEEKDAY_NAMES[dayOfWeek]}
         </h1>
-        <p className="mt-1 text-sm text-paper-dim">
-          Semana {weekNumber} de {program.durationWeeks}
-          {weeksRemaining > 0
-            ? ` · faltam ${weeksRemaining} ${weeksRemaining === 1 ? "semana" : "semanas"} (${daysRemaining} dias)`
-            : " · última semana!"}
+        <p className="mt-2 text-sm text-ink-dim">
+          {date === today ? `${WEEKDAY_NAMES[dayOfWeek].toLowerCase()}, ` : ""}
+          {formatDayMonth(date)}
         </p>
-      </div>
+        <p className="tnum mt-0.5 text-sm text-ink-faint">
+          Semana {weekNumber} de {program.durationWeeks} · faltam {daysRemaining} dias
+        </p>
 
-      <div className="grid grid-cols-2 gap-3">
-        <div className="rounded-lg border border-line bg-ink-raised p-3">
-          <p className="text-xs text-paper-faint">Refeições hoje</p>
-          <p className="mb-2 font-display text-2xl font-semibold text-paper">{mealsDoneCount}/{meals.length}</p>
-          <ProgressBar value={mealsDoneCount} max={meals.length} />
+        <div className="mt-4 flex items-center gap-3">
+          <ProgressBar value={dayDone} max={dayTotal} />
+          <span className="tnum shrink-0 text-sm font-medium text-ink-dim">
+            {dayDone}/{dayTotal}
+          </span>
         </div>
-        <div className="rounded-lg border border-line bg-ink-raised p-3">
-          <p className="text-xs text-paper-faint">Treinos na semana</p>
-          <p className="mb-2 font-display text-2xl font-semibold text-paper">{dailyLog?.training_done ? 1 : 0}/{trainingDaysThisWeek}</p>
-          <ProgressBar value={dailyLog?.training_done ? 1 : 0} max={trainingDaysThisWeek} />
-        </div>
-      </div>
+      </header>
 
-      <WeekView today={today} />
+      <WeekView today={today} viewing={date} />
 
-      {pattern.trainingBlock && workoutBlock ? (
+      {workoutBlock ? (
         <TrainingCard
           key={date}
           date={date}
-          block={pattern.trainingBlock}
+          label={workoutBlock.label}
           focus={workoutBlock.focus}
-          exercises={getExercisesForWeek(workoutBlock, weekNumber)}
+          exercises={workoutBlock.exercises}
           exercisesDone={dailyLog?.exercises_done ?? {}}
           trainingDone={dailyLog?.training_done ?? false}
-          label="Treino de hoje"
+          guidelines={workoutPlan.guidelines}
         />
       ) : (
         <ActivityPicker date={date} pattern={pattern} trainingDone={dailyLog?.training_done ?? false} />
       )}
 
+      {pattern.activity && !pattern.activityEditable && (
+        <p className="px-1 text-sm text-ink-dim">+ {pattern.activity}</p>
+      )}
+
       <MealsList key={date} date={date} meals={meals} mealLogs={dailyLog?.meals ?? {}} />
-      <SupplementsList key={date} date={date} supplements={supplements} supplementLogs={dailyLog?.supplements ?? {}} />
+      <SupplementsList
+        key={date}
+        date={date}
+        supplements={supplements}
+        supplementLogs={dailyLog?.supplements ?? {}}
+      />
     </main>
   );
 }
@@ -118,31 +123,31 @@ async function ActivityPicker({
     const activity = String(formData.get("activity"));
     await setActivityChoice(date, activity || null);
   }
-  const showDoneCheckbox = pattern.activity !== null && !isRestActivity(pattern.activity);
+  const showDoneCheckbox = !isRestActivity(pattern.activity);
   return (
-    <div className="rounded-lg border border-line bg-ink-raised p-4">
-      <p className="font-display text-lg font-medium text-paper">Atividade de hoje</p>
-      <form action={pick} className="mt-2">
-        <div className="flex flex-wrap gap-2">
-          {pattern.activityOptions.map((option: string) => (
-            <button
-              key={option}
-              type="submit"
-              name="activity"
-              value={option}
-              className={`min-h-11 rounded-full px-4 text-sm transition-colors ${
-                pattern.activity === option
-                  ? "bg-ember text-ink font-medium"
-                  : "border border-line-bright bg-ink-field text-paper-dim active:bg-ink"
-              }`}
-            >
-              {option}
-            </button>
-          ))}
-        </div>
+    <div className="rounded-2xl border border-line bg-surface p-5">
+      <p className="text-xs font-medium text-ink-faint">Dia sem musculação</p>
+      <p className="mt-1 text-3xl font-extrabold leading-none tracking-tight">Descanso</p>
+      <p className="mt-1.5 text-sm text-ink-dim">Escolha a atividade do dia</p>
+      <form action={pick} className="mt-4 flex flex-wrap gap-2">
+        {pattern.activityOptions.map((option: string) => (
+          <button
+            key={option}
+            type="submit"
+            name="activity"
+            value={option}
+            className={`min-h-11 rounded-full px-4 text-sm font-medium transition-colors ${
+              pattern.activity === option
+                ? "bg-ink text-surface"
+                : "border border-line-strong text-ink-dim active:bg-canvas"
+            }`}
+          >
+            {option}
+          </button>
+        ))}
       </form>
       {showDoneCheckbox && (
-        <div className="mt-3 border-t border-line pt-3">
+        <div className="mt-2 border-t border-line pt-1">
           <ActivityDoneCheckbox key={date} date={date} trainingDone={trainingDone} />
         </div>
       )}

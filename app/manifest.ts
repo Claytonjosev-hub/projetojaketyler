@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Acompanhamento de treino, dieta e suplementação — Protocolo Jake Tyler",
     start_url: "/",
     display: "standalone",
-    background_color: "#14120f",
-    theme_color: "#14120f",
+    background_color: "#f4f4f2",
+    theme_color: "#f4f4f2",
     icons: [
       { src: "/icon", sizes: "512x512", type: "image/png" },
       { src: "/apple-icon", sizes: "180x180", type: "image/png" },

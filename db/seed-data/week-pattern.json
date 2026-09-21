@@ -1,9 +1,9 @@
 [
-  { "dayOfWeek": 0, "trainingBlock": "A", "activity": "Cardio pós-treino 20-40min @ 120-130bpm", "activityEditable": false, "activityOptions": [] },
-  { "dayOfWeek": 1, "trainingBlock": "B", "activity": "Cardio pós-treino 20-40min @ 120-130bpm", "activityEditable": false, "activityOptions": [] },
-  { "dayOfWeek": 2, "trainingBlock": "C", "activity": "Cardio pós-treino 20-40min @ 120-130bpm", "activityEditable": false, "activityOptions": [] },
-  { "dayOfWeek": 3, "trainingBlock": "D", "activity": "Cardio pós-treino 20-40min @ 120-130bpm", "activityEditable": false, "activityOptions": [] },
-  { "dayOfWeek": 4, "trainingBlock": "E", "activity": "Cardio pós-treino 20-40min @ 120-130bpm", "activityEditable": false, "activityOptions": [] },
-  { "dayOfWeek": 5, "trainingBlock": null, "activity": null, "activityEditable": true, "activityOptions": ["Futebol", "Corrida", "Descanso"] },
-  { "dayOfWeek": 6, "trainingBlock": null, "activity": null, "activityEditable": true, "activityOptions": ["Futebol", "Corrida", "Descanso"] }
+  { "dayOfWeek": 0, "trainingBlock": "pull", "activity": "Cardio 30 min", "activityEditable": false, "activityOptions": [] },
+  { "dayOfWeek": 1, "trainingBlock": "push", "activity": "Cardio 30 min", "activityEditable": false, "activityOptions": [] },
+  { "dayOfWeek": 2, "trainingBlock": "legs", "activity": "Cardio 30 min", "activityEditable": false, "activityOptions": [] },
+  { "dayOfWeek": 3, "trainingBlock": null, "activity": null, "activityEditable": true, "activityOptions": ["Corrida 30 min", "Futebol", "Descanso"] },
+  { "dayOfWeek": 4, "trainingBlock": "upper", "activity": "Cardio 30 min", "activityEditable": false, "activityOptions": [] },
+  { "dayOfWeek": 5, "trainingBlock": "legs2", "activity": "Cardio 30 min", "activityEditable": false, "activityOptions": [] },
+  { "dayOfWeek": 6, "trainingBlock": null, "activity": null, "activityEditable": true, "activityOptions": ["Corrida 30 min", "Futebol", "Descanso"] }
 ]

@@ -8,16 +8,14 @@ export function Checkbox({
   label: string;
 }) {
   return (
-    <label className="flex min-h-11 cursor-pointer items-center gap-3 py-2 active:opacity-70">
+    <label className="flex min-h-11 cursor-pointer items-center gap-3 active:opacity-60">
       <input
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
-        className="h-6 w-6 shrink-0 rounded border-2 border-line-bright bg-transparent accent-ember"
+        className="h-6 w-6 shrink-0 rounded-md border-2 border-line-strong accent-done"
       />
-      <span className={checked ? "text-paper-faint line-through" : "text-paper"}>
-        {label}
-      </span>
+      <span className={checked ? "text-ink-faint line-through" : "text-ink"}>{label}</span>
     </label>
   );
 }

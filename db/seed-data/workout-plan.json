@@ -1,60 +1,79 @@
 {
-  "A": {
-    "focus": "Costas, Peito, Ombro e Panturrilha",
-    "exercises": [
-      { "name": "Flexão Plantar no Leg 45 ou no Smith", "reps": "8-12", "tempo": "3210", "sets": [2, 3, 3, 3, 3, 4, 4, 4] },
-      { "name": "Puxada Frente Pegada Aberta", "reps": "8-12", "tempo": "2110", "sets": [2, 2, 2, 3, 3, 4, 4, 4] },
-      { "name": "Remada Cavalinho Com o Peito Apoiado Pegada Pronada Aberta", "reps": "8-12", "tempo": "2110", "sets": [2, 2, 3, 3, 3, 3, 4, 4] },
-      { "name": "Supino Inclinado 30 Graus com Halteres", "reps": "6-10", "tempo": "2110", "sets": [2, 3, 3, 3, 3, 3, 3, 4] },
-      { "name": "Crucifixo Máquina", "reps": "8-12", "tempo": "2110", "sets": [2, 2, 2, 2, 2, 2, 3, 3] },
-      { "name": "Abdução de Ombros no Cabo com Polia na Altura da Mão (Lengthened Position)", "reps": "12", "tempo": "2110", "sets": [3, 3, 3, 3, 4, 4, 4, 5] }
-    ]
-  },
-  "B": {
-    "focus": "Braço e Inferiores (Ênfase em Isquiotibiais)",
-    "exercises": [
-      { "name": "Rosca Simultânea no Banco Inclinado 45 graus", "reps": "8-12", "tempo": "2110", "sets": [2, 3, 4, 4, 4, 4, 4, 4] },
-      { "name": "Tríceps JM Press", "reps": "10-15", "tempo": "2110", "sets": [2, 2, 2, 3, 3, 4, 4, 4] },
-      { "name": "Stiff", "reps": "5-8", "tempo": "3210", "sets": [1, 2, 2, 2, 2, 3, 3, 4] },
-      { "name": "Cadeira Flexora", "reps": "8-12", "tempo": "2110", "sets": [2, 2, 3, 3, 3, 3, 4, 4] },
-      { "name": "Agachamento no Hack", "reps": "15-20", "tempo": "5110", "sets": [2, 2, 2, 2, 3, 3, 3, 3] },
-      { "name": "Cadeira Extensora", "reps": "12-15", "tempo": "3110", "sets": [2, 2, 2, 2, 2, 2, 3, 3] }
-    ]
-  },
-  "C": {
-    "focus": "Costas, Peito, Ombro e Abdômen",
-    "exercises": [
-      { "name": "Abdômen na Polia com Corda", "reps": "8-12", "tempo": "2111", "sets": [2, 2, 3, 3, 3, 3, 4, 4] },
-      { "name": "Supino Máquina", "reps": "8-12", "tempo": "2110", "sets": [2, 2, 2, 2, 3, 4, 4, 4] },
-      { "name": "Cross Over Polia Alta", "reps": "12-15", "tempo": "2111", "sets": [2, 2, 2, 2, 2, 2, 3, 4] },
-      { "name": "Barra Fixa Pegada Pronada", "reps": "6-10", "tempo": "2110", "sets": [2, 3, 3, 3, 3, 3, 3, 4] },
-      { "name": "Remada Curvada Pegada Pronada Aberta", "reps": "6-10", "tempo": "2111", "sets": [2, 2, 2, 3, 3, 3, 4, 4] },
-      { "name": "Abdução de Ombros em Y na Polia Baixa", "reps": "10-15", "tempo": "2110", "sets": [3, 3, 4, 4, 4, 5, 5, 5] }
-    ]
-  },
-  "D": {
-    "focus": "Braço e Inferiores (Ênfase em Quadríceps)",
-    "exercises": [
-      { "name": "Tríceps Polia Alta", "reps": "10-20", "tempo": "3110", "sets": [2, 2, 3, 3, 3, 4, 4, 4] },
-      { "name": "Rosca Polia Baixa Bilateral por Trás", "reps": "12-15", "tempo": "2110", "sets": [2, 2, 2, 3, 4, 4, 4, 4] },
-      { "name": "Agachamento no Smith", "reps": "6-12", "tempo": "4110", "sets": [2, 2, 2, 2, 3, 3, 4, 4] },
-      { "name": "Agachamento no Hack", "reps": "8-12", "tempo": "5110", "sets": [2, 2, 3, 3, 3, 3, 3, 4] },
-      { "name": "Afundo no Smith com Step", "reps": "8-12", "tempo": "3110", "sets": [1, 2, 2, 2, 2, 2, 2, 3] },
-      { "name": "Cadeira Flexora", "reps": "12-15", "tempo": "2110", "sets": [2, 2, 2, 2, 3, 3, 3, 3] },
-      { "name": "Stiff com Halteres", "reps": "8-12", "tempo": "", "sets": [2, 2, 2, 3, 3, 3, 3, 3] },
-      { "name": "Flexão Plantar no Leg 45 ou no Smith", "reps": "8-12", "tempo": "3210", "sets": [2, 2, 2, 2, 2, 2, 2, 2] }
-    ]
-  },
-  "E": {
-    "focus": "Costas, Peito, Ombro, Abdômen e Panturrilha",
-    "exercises": [
-      { "name": "Flexão Plantar no Leg 45 ou no Smith", "reps": "8-12", "tempo": "3210", "sets": [3, 3, 3, 3, 4, 4, 4, 4] },
-      { "name": "Remada Baixa Pegada Pronada Aberta", "reps": "8-12", "tempo": "2111", "sets": [2, 3, 3, 3, 3, 3, 3, 4] },
-      { "name": "Pull Over com Halteres", "reps": "8-12", "tempo": "2110", "sets": [2, 2, 2, 2, 3, 3, 3, 3] },
-      { "name": "Crucifixo Inclinado na Polia Baixa", "reps": "12-15", "tempo": "3110", "sets": [3, 3, 3, 3, 3, 3, 3, 4] },
-      { "name": "Desenvolvimento de Ombros no Smith", "reps": "6-10", "tempo": "2110", "sets": [2, 2, 3, 3, 3, 4, 4, 4] },
-      { "name": "Abdução de Ombros no Cabo com Polia na Altura da Mão (Lengthened Position)", "reps": "12", "tempo": "2110", "sets": [3, 3, 3, 4, 4, 4, 4, 5] },
-      { "name": "Abdômen na Polia com Corda", "reps": "8-12", "tempo": "2111", "sets": [3, 3, 3, 3, 3, 4, 4, 4] }
-    ]
+  "guidelines": [
+    "2 séries de aquecimento de 15-20 reps antes de todo treino.",
+    "1 ou 2 séries de reconhecimento de carga antes de cada exercício (60-80% da carga de trabalho).",
+    "Todas as séries de trabalho até a falha, dentro das repetições escritas.",
+    "Descanso de 2 a 5 minutos entre as séries de trabalho.",
+    "As séries de aquecimento e reconhecimento não vão até a falha."
+  ],
+  "blocks": {
+    "pull": {
+      "label": "Pull",
+      "short": "P",
+      "focus": "Costas e bíceps",
+      "exercises": [
+        { "name": "Puxada aberta pronada", "scheme": "2x8-10 · 1x15" },
+        { "name": "Remada fechada com triângulo", "scheme": "3x8-10" },
+        { "name": "Remada livre pronada", "scheme": "2x8-10 · 1x15" },
+        { "name": "Remada neutra máquina", "scheme": "2x8 · 1x12-15" },
+        { "name": "Serrote", "scheme": "1x8 · 1x8-12 · 1x15" },
+        { "name": "Crucifixo inverso", "scheme": "2x5-9 · 1x15-20" },
+        { "name": "Rosca direta", "scheme": "2x10 · 1x15" },
+        { "name": "Rosca scott máquina", "scheme": "2x8-12 · 1x15" }
+      ]
+    },
+    "push": {
+      "label": "Push",
+      "short": "PS",
+      "focus": "Peito, ombro e tríceps",
+      "exercises": [
+        { "name": "Supino inclinado com halteres", "scheme": "2x6-8 · 1x12" },
+        { "name": "Supino reto articulado", "scheme": "2x8-10" },
+        { "name": "Cross over polia baixa", "scheme": "3x10-15" },
+        { "name": "Desenvolvimento", "scheme": "1x6 · 1x8-10 · 1x15" },
+        { "name": "Elevação lateral", "scheme": "1x10 · 2x12-15" },
+        { "name": "Extensão de tríceps com corda", "scheme": "1x8-10 · 2x12-15" },
+        { "name": "Paralela na máquina", "scheme": "2x12 · 1x15" }
+      ]
+    },
+    "legs": {
+      "label": "Legs",
+      "short": "L",
+      "focus": "Posterior, quadríceps e glúteo",
+      "exercises": [
+        { "name": "Cadeira flexora", "scheme": "2x8-10 · 2x15" },
+        { "name": "Agachamento livre", "scheme": "2x8 · 2x15" },
+        { "name": "Búlgaro", "scheme": "2x8 · 1x10-12", "note": "triplo drop set na última série" },
+        { "name": "Mesa flexora", "scheme": "2x10 · 2x15" },
+        { "name": "Elevação pélvica", "scheme": "2x12 · 2x15" },
+        { "name": "Abdutora", "scheme": "3x15" }
+      ]
+    },
+    "upper": {
+      "label": "Upper",
+      "short": "U",
+      "focus": "Superiores completo",
+      "exercises": [
+        { "name": "Remada curvada com halteres", "scheme": "2x12" },
+        { "name": "Remada neutra", "scheme": "2x8-10 · 1x15" },
+        { "name": "Supino inclinado no smith ou máquina", "scheme": "2x10 · 1x15" },
+        { "name": "Desenvolvimento no smith", "scheme": "1x8 · 1x12-15" },
+        { "name": "Crucifixo máquina", "scheme": "3x15" },
+        { "name": "Rosca scott máquina + tríceps corda", "scheme": "2x10", "note": "bi-set" },
+        { "name": "Rosca martelo + supino fechado", "scheme": "2x10", "note": "bi-set" }
+      ]
+    },
+    "legs2": {
+      "label": "Legs 2",
+      "short": "L2",
+      "focus": "Pernas completo",
+      "exercises": [
+        { "name": "Cadeira flexora", "scheme": "2x8 · 2x15" },
+        { "name": "Leg press", "scheme": "3x15" },
+        { "name": "Cadeira extensora", "scheme": "3x10", "note": "triplo drop set ao final da última série" },
+        { "name": "Levantamento terra", "scheme": "1x6 · 1x8 · 1x12-15" },
+        { "name": "Afundo", "scheme": "3x12" }
+      ]
+    }
   }
 }

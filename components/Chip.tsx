@@ -6,12 +6,12 @@ export function Chip({
   tone?: "neutral" | "success" | "muted";
 }) {
   const toneClasses = {
-    neutral: "border-line-bright bg-ink-field text-paper-dim",
-    success: "border-moss/40 bg-moss-soft text-moss",
-    muted: "border-transparent text-paper-faint",
+    neutral: "bg-canvas text-ink-dim",
+    success: "bg-done-soft text-done",
+    muted: "text-ink-faint",
   }[tone];
   return (
-    <span className={`inline-block rounded border px-2 py-0.5 text-xs ${toneClasses}`}>
+    <span className={`inline-block rounded-full px-2.5 py-1 text-xs font-medium ${toneClasses}`}>
       {label}
     </span>
   );

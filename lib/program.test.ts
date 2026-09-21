@@ -1,36 +1,16 @@
 import { describe, expect, it } from "vitest";
-import {
-  getDayPattern,
-  getExercisesForWeek,
-  getProgramDay,
-  getWeekNumber,
-  isDayComplete,
-} from "./program";
-import type {
-  DailyLog,
-  Meal,
-  Supplement,
-  WeekPatternEntry,
-  WorkoutBlockContent,
-} from "./types";
+import { getDayPattern, getProgramDay, getWeekNumber, isDayComplete, isRestActivity } from "./program";
+import type { DailyLog, Meal, Supplement, WeekPatternEntry } from "./types";
 
 const weekPattern: WeekPatternEntry[] = [
-  { dayOfWeek: 0, trainingBlock: "A", activity: "Cardio", activityEditable: false, activityOptions: [] },
-  { dayOfWeek: 1, trainingBlock: "B", activity: "Cardio", activityEditable: false, activityOptions: [] },
-  { dayOfWeek: 2, trainingBlock: "C", activity: "Cardio", activityEditable: false, activityOptions: [] },
-  { dayOfWeek: 3, trainingBlock: "D", activity: "Cardio", activityEditable: false, activityOptions: [] },
-  { dayOfWeek: 4, trainingBlock: "E", activity: "Cardio", activityEditable: false, activityOptions: [] },
-  { dayOfWeek: 5, trainingBlock: null, activity: null, activityEditable: true, activityOptions: ["Futebol", "Descanso"] },
+  { dayOfWeek: 0, trainingBlock: "pull", activity: "Cardio 30 min", activityEditable: false, activityOptions: [] },
+  { dayOfWeek: 1, trainingBlock: "push", activity: "Cardio 30 min", activityEditable: false, activityOptions: [] },
+  { dayOfWeek: 2, trainingBlock: "legs", activity: "Cardio 30 min", activityEditable: false, activityOptions: [] },
+  { dayOfWeek: 3, trainingBlock: null, activity: null, activityEditable: true, activityOptions: ["Futebol", "Descanso"] },
+  { dayOfWeek: 4, trainingBlock: "upper", activity: "Cardio 30 min", activityEditable: false, activityOptions: [] },
+  { dayOfWeek: 5, trainingBlock: "legs2", activity: "Cardio 30 min", activityEditable: false, activityOptions: [] },
   { dayOfWeek: 6, trainingBlock: null, activity: null, activityEditable: true, activityOptions: ["Futebol", "Descanso"] },
 ];
-
-const blockA: WorkoutBlockContent = {
-  focus: "Costas, Peito, Ombro e Panturrilha",
-  exercises: [
-    { name: "Ex1", reps: "8-12", tempo: "2110", sets: [2, 3, 3, 3, 3, 4, 4, 4] },
-    { name: "Ex2", reps: "8-12", tempo: "2110", sets: [2, 2, 2, 3, 3, 4, 4, 4] },
-  ],
-};
 
 const meals: Meal[] = [
   { id: "cafe", time: "07:00", name: "Café", options: [{ title: "Padrão", items: "x" }] },
@@ -68,40 +48,38 @@ describe("getDayPattern", () => {
   it("resolves a fixed training day with no log", () => {
     const pattern = getDayPattern("2026-09-14", weekPattern, null); // Monday
     expect(pattern).toEqual({
-      trainingBlock: "A",
-      activity: "Cardio",
+      trainingBlock: "pull",
+      activity: "Cardio 30 min",
       activityEditable: false,
       activityOptions: [],
     });
   });
 
-  it("overlays activity_choice on an editable weekend day", () => {
-    const log = { ...emptyLog("2026-09-19"), activity_choice: "Futebol" };
-    const pattern = getDayPattern("2026-09-19", weekPattern, log); // Saturday
+  it("resolves Saturday to the second legs block", () => {
+    expect(getDayPattern("2026-09-19", weekPattern, null).trainingBlock).toBe("legs2");
+  });
+
+  it("overlays activity_choice on an editable rest day", () => {
+    const log = { ...emptyLog("2026-09-17"), activity_choice: "Futebol" };
+    const pattern = getDayPattern("2026-09-17", weekPattern, log); // Thursday
     expect(pattern.trainingBlock).toBeNull();
     expect(pattern.activity).toBe("Futebol");
   });
 
   it("leaves activity null on an editable day with no choice yet", () => {
-    const pattern = getDayPattern("2026-09-19", weekPattern, null);
+    const pattern = getDayPattern("2026-09-17", weekPattern, null);
     expect(pattern.activity).toBeNull();
     expect(pattern.activityEditable).toBe(true);
   });
 });
 
-describe("getExercisesForWeek", () => {
-  it("resolves week 1 set counts", () => {
-    expect(getExercisesForWeek(blockA, 1)).toEqual([
-      { name: "Ex1", reps: "8-12", tempo: "2110", sets: 2 },
-      { name: "Ex2", reps: "8-12", tempo: "2110", sets: 2 },
-    ]);
+describe("isRestActivity", () => {
+  it("treats no choice and rest labels as rest", () => {
+    expect(isRestActivity(null)).toBe(true);
+    expect(isRestActivity("Descanso")).toBe(true);
   });
-
-  it("resolves week 8 set counts", () => {
-    expect(getExercisesForWeek(blockA, 8)).toEqual([
-      { name: "Ex1", reps: "8-12", tempo: "2110", sets: 4 },
-      { name: "Ex2", reps: "8-12", tempo: "2110", sets: 4 },
-    ]);
+  it("treats a real activity as not rest", () => {
+    expect(isRestActivity("Futebol")).toBe(false);
   });
 });
 
@@ -123,14 +101,14 @@ describe("isDayComplete", () => {
   });
 
   it("is true on a rest day once meals and supplements are done, with no training required", () => {
-    const pattern = getDayPattern("2026-09-19", weekPattern, { ...emptyLog("2026-09-19"), activity_choice: "Descanso" });
+    const pattern = getDayPattern("2026-09-17", weekPattern, { ...emptyLog("2026-09-17"), activity_choice: "Descanso" });
     const log: DailyLog = {
-      ...emptyLog("2026-09-19"),
+      ...emptyLog("2026-09-17"),
       activity_choice: "Descanso",
       meals: { cafe: { chosenOptionIndex: 0, done: true } },
       supplements: { "omega-3": true },
     };
-    expect(isDayComplete({ date: "2026-09-19", today, dailyLog: log, pattern, meals, supplements })).toBe(true);
+    expect(isDayComplete({ date: "2026-09-17", today, dailyLog: log, pattern, meals, supplements })).toBe(true);
   });
 
   it("is false on a training day when training_done is false even if meals/supplements are done", () => {

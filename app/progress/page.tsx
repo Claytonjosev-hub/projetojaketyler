@@ -66,37 +66,50 @@ export default async function ProgressPage() {
   const monthLabel = monthLabelRaw.charAt(0).toUpperCase() + monthLabelRaw.slice(1);
 
   return (
-    <main className="space-y-4 p-4 pt-6">
-      <h1 className="font-display text-3xl font-semibold leading-none text-paper">Progresso</h1>
+    <main className="mx-auto max-w-lg space-y-3 p-4 pt-8">
+      <h1 className="px-1 pb-2 text-[32px] font-extrabold leading-none tracking-tight">Progresso</h1>
 
-      <Card>
-        <Heatmap days={days} />
+      <Card className="p-5">
+        <p className="mb-3 text-xs font-medium text-ink-faint">
+          {program.durationWeeks} semanas · cada coluna é uma semana
+        </p>
+        <Heatmap days={days} weeks={program.durationWeeks} />
       </Card>
 
       <div className="grid grid-cols-2 gap-3">
-        <div className="rounded-lg border border-line bg-ink-raised p-3">
-          <p className="text-xs text-paper-faint">Dias completos</p>
-          <p className="mb-2 font-display text-2xl font-semibold text-paper">
-            {completedCount}/{elapsedCount} <span className="text-base text-paper-dim">({completionRate}%)</span>
+        <Card className="p-5">
+          <p className="text-xs font-medium text-ink-faint">Sequência atual</p>
+          <p className="tnum mt-2 text-3xl font-extrabold leading-none">
+            {currentStreak}
+            <span className="ml-1 text-base font-medium text-ink-dim">
+              {currentStreak === 1 ? "dia" : "dias"}
+            </span>
           </p>
-          <ProgressBar value={completedCount} max={elapsedCount || 1} />
-        </div>
-        <div className="rounded-lg border border-line bg-ink-raised p-3">
-          <p className="text-xs text-paper-faint">Sequência atual</p>
-          <p className="font-display text-2xl font-semibold text-paper">
-            {currentStreak} <span className="text-base text-paper-dim">{currentStreak === 1 ? "dia" : "dias"}</span>
+        </Card>
+        <Card className="p-5">
+          <p className="text-xs font-medium text-ink-faint">Dias completos</p>
+          <p className="tnum mt-2 text-3xl font-extrabold leading-none">
+            {completionRate}
+            <span className="ml-0.5 text-base font-medium text-ink-dim">%</span>
           </p>
-        </div>
+          <p className="tnum mt-1 text-xs text-ink-faint">
+            {completedCount} de {elapsedCount}
+          </p>
+        </Card>
       </div>
 
       {monthElapsed > 0 && (
-        <div className="rounded-lg border border-line bg-ink-raised p-3">
-          <p className="text-xs text-paper-faint">{monthLabel}</p>
-          <p className="mb-2 font-display text-2xl font-semibold text-paper">
-            {monthCompleted}/{monthElapsed} <span className="text-base text-paper-dim">({monthRate}%)</span>
-          </p>
-          <ProgressBar value={monthCompleted} max={monthElapsed} />
-        </div>
+        <Card className="p-5">
+          <div className="flex items-baseline justify-between">
+            <p className="text-xs font-medium text-ink-faint">{monthLabel}</p>
+            <p className="tnum text-sm text-ink-dim">
+              {monthCompleted}/{monthElapsed} ({monthRate}%)
+            </p>
+          </div>
+          <div className="mt-3">
+            <ProgressBar value={monthCompleted} max={monthElapsed} />
+          </div>
+        </Card>
       )}
     </main>
   );

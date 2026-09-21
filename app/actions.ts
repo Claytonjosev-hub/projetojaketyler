@@ -15,7 +15,7 @@ async function recomputeTrainingDone(date: string, exercisesDone: Record<string,
   ]);
   const pattern = getDayPattern(date, weekPattern, dailyLog);
   if (!pattern.trainingBlock) return false;
-  const block = workoutPlan[pattern.trainingBlock];
+  const block = workoutPlan.blocks[pattern.trainingBlock];
   if (!block) {
     throw new Error(`workoutPlan has no entry for block "${pattern.trainingBlock}"`);
   }

@@ -9,11 +9,11 @@ export function Card({
   onClick?: () => void;
   className?: string;
 }) {
-  const interactive = onClick ? "cursor-pointer active:bg-ink-field" : "";
+  const interactive = onClick ? "cursor-pointer active:bg-canvas" : "";
   return (
     <div
       onClick={onClick}
-      className={`rounded-lg border border-line bg-ink-raised p-4 transition-colors ${interactive} ${className}`}
+      className={`rounded-2xl border border-line bg-surface transition-colors ${interactive} ${className}`}
     >
       {children}
     </div>

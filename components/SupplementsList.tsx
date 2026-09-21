@@ -29,29 +29,40 @@ export function SupplementsList({
     }
   }
 
+  const doneCount = supplements.filter((s) => logs[s.id] === true).length;
+
   return (
-    <Card className="!p-0 overflow-hidden">
-      <p className="px-4 pt-4 pb-2 font-display text-lg font-medium text-paper">Suplementos</p>
+    <Card>
+      <div className="flex items-center justify-between px-5 pt-4 pb-2">
+        <p className="font-semibold">Suplementos</p>
+        <p className="tnum text-sm text-ink-dim">
+          {doneCount}/{supplements.length}
+        </p>
+      </div>
       {supplements.map((supplement) => {
         const checked = logs[supplement.id] === true;
         return (
-          <div key={supplement.id} className="border-t border-line px-4 py-3 first:border-t-0">
-            <label className="flex min-h-11 cursor-pointer items-start gap-3 active:opacity-70">
+          <div key={supplement.id} className="border-t border-line px-5">
+            <label className="flex min-h-14 cursor-pointer items-center gap-3 active:opacity-60">
               <input
                 type="checkbox"
                 checked={checked}
                 onChange={(e) => handleToggle(supplement.id, e.target.checked)}
-                className="mt-0.5 h-6 w-6 shrink-0 rounded border-2 border-line-bright bg-transparent accent-ember"
+                className="h-6 w-6 shrink-0 rounded-md border-2 border-line-strong accent-done"
               />
               <span className="flex-1">
-                <span className={checked ? "text-paper-faint line-through" : "text-paper"}>
+                <span
+                  className={`block text-[15px] leading-tight ${
+                    checked ? "text-ink-faint line-through" : "text-ink"
+                  }`}
+                >
                   {supplement.name}
                 </span>
-                <span className="block text-xs text-paper-dim">{supplement.dose}</span>
+                <span className="mt-0.5 block text-[13px] text-ink-dim">{supplement.dose}</span>
               </span>
             </label>
             {errorId === supplement.id && (
-              <p className="ml-9 text-xs text-red-400">Erro ao salvar — tente novamente.</p>
+              <p className="pb-2 pl-9 text-xs text-red-600">Erro ao salvar — tente de novo.</p>
             )}
           </div>
         );

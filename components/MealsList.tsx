@@ -15,6 +15,7 @@ export function MealsList({
   mealLogs: Record<string, MealLogEntry>;
 }) {
   const [logs, setLogs] = useState(mealLogs);
+  const [openId, setOpenId] = useState<string | null>(null);
   const [errorMealId, setErrorMealId] = useState<string | null>(null);
 
   async function handleDone(mealId: string, done: boolean) {
@@ -41,47 +42,73 @@ export function MealsList({
     }
   }
 
+  const doneCount = meals.filter((meal) => logs[meal.id]?.done).length;
+
   return (
-    <Card className="!p-0 overflow-hidden">
-      <p className="px-4 pt-4 pb-2 font-display text-lg font-medium text-paper">Refeições</p>
+    <Card>
+      <div className="flex items-center justify-between px-5 pt-4 pb-2">
+        <p className="font-semibold">Refeições</p>
+        <p className="tnum text-sm text-ink-dim">
+          {doneCount}/{meals.length}
+        </p>
+      </div>
       {meals.map((meal) => {
         const log = logs[meal.id] ?? { chosenOptionIndex: 0, done: false };
         const option = meal.options[log.chosenOptionIndex] ?? meal.options[0];
+        const isOpen = openId === meal.id;
         return (
-          <div key={meal.id} className="border-t border-line px-4 py-3 first:border-t-0">
-            <p className="text-sm">
-              <span className="font-display text-base text-ember">{meal.time}</span>
-              <span className="ml-2 text-paper-dim">{meal.name}</span>
-            </p>
-            {meal.options.length > 1 && (
-              <select
-                className="mt-1.5 w-full rounded border border-line-bright bg-ink-field px-2 py-1.5 text-xs text-paper"
-                value={log.chosenOptionIndex}
-                onChange={(e) => handleOption(meal.id, Number(e.target.value))}
+          <div key={meal.id} className="border-t border-line">
+            <div className="flex items-stretch">
+              <label className="flex min-h-14 cursor-pointer items-center pl-5 pr-3 active:opacity-60">
+                <input
+                  type="checkbox"
+                  checked={log.done}
+                  onChange={(e) => handleDone(meal.id, e.target.checked)}
+                  className="h-6 w-6 shrink-0 rounded-md border-2 border-line-strong accent-done"
+                />
+              </label>
+              <button
+                type="button"
+                onClick={() => setOpenId(isOpen ? null : meal.id)}
+                className="flex min-h-14 flex-1 items-center justify-between gap-3 pr-5 text-left active:opacity-60"
               >
-                {meal.options.map((opt, i) => (
-                  <option key={opt.title} value={i}>{opt.title}</option>
-                ))}
-              </select>
+                <span>
+                  <span className="tnum text-sm text-ink-faint">{meal.time}</span>
+                  <span
+                    className={`ml-2 text-[15px] ${log.done ? "text-ink-faint line-through" : "text-ink"}`}
+                  >
+                    {meal.name}
+                  </span>
+                </span>
+                <span className={`text-ink-faint transition-transform ${isOpen ? "rotate-180" : ""}`}>
+                  ⌄
+                </span>
+              </button>
+            </div>
+
+            {isOpen && (
+              <div className="px-5 pb-4">
+                {meal.options.length > 1 && (
+                  <select
+                    className="mb-2 w-full rounded-xl border border-line-strong bg-surface px-3 py-2.5 text-sm"
+                    value={log.chosenOptionIndex}
+                    onChange={(e) => handleOption(meal.id, Number(e.target.value))}
+                  >
+                    {meal.options.map((opt, i) => (
+                      <option key={opt.title} value={i}>
+                        {opt.title}
+                      </option>
+                    ))}
+                  </select>
+                )}
+                <p className="text-sm leading-relaxed text-ink-dim">
+                  {option ? option.items : "Nenhuma opção configurada."}
+                </p>
+              </div>
             )}
-            {option ? (
-              <p className="mt-1 text-sm text-paper-dim">{option.items}</p>
-            ) : (
-              <p className="mt-1 text-sm text-paper-faint">Nenhuma opção configurada para esta refeição.</p>
-            )}
-            <label className="mt-2 flex min-h-11 cursor-pointer items-center gap-3 active:opacity-70">
-              <input
-                type="checkbox"
-                checked={log.done}
-                onChange={(e) => handleDone(meal.id, e.target.checked)}
-                className="h-6 w-6 shrink-0 rounded border-2 border-line-bright bg-transparent accent-ember"
-              />
-              <span className={log.done ? "text-paper-faint line-through" : "text-paper"}>
-                Refeição feita
-              </span>
-            </label>
+
             {errorMealId === meal.id && (
-              <p className="ml-9 text-xs text-red-400">Erro ao salvar — tente novamente.</p>
+              <p className="px-5 pb-2 text-xs text-red-600">Erro ao salvar — tente de novo.</p>
             )}
           </div>
         );

@@ -1,5 +1,3 @@
-export type TrainingBlock = "A" | "B" | "C" | "D" | "E";
-
 export interface Program {
   startDate: string; // "YYYY-MM-DD"
   durationWeeks: number;
@@ -7,7 +5,7 @@ export interface Program {
 
 export interface WeekPatternEntry {
   dayOfWeek: number; // 0 = Monday .. 6 = Sunday
-  trainingBlock: TrainingBlock | null;
+  trainingBlock: string | null; // key into WorkoutPlan.blocks
   activity: string | null;
   activityEditable: boolean;
   activityOptions: string[];
@@ -15,17 +13,21 @@ export interface WeekPatternEntry {
 
 export interface Exercise {
   name: string;
-  reps: string;
-  tempo: string;
-  sets: number[]; // length 8, sets[i] = sets prescribed in program week i+1
+  scheme: string; // prescribed sets, e.g. "2x8-10 · 1x15"
+  note?: string; // technique note, e.g. "triplo drop set na última série"
 }
 
 export interface WorkoutBlockContent {
-  focus: string;
+  label: string; // "Pull", "Legs 2"
+  short: string; // week-strip marker, e.g. "P", "L2"
+  focus: string; // "Costas e bíceps"
   exercises: Exercise[];
 }
 
-export type WorkoutPlan = Record<TrainingBlock, WorkoutBlockContent>;
+export interface WorkoutPlan {
+  guidelines: string[];
+  blocks: Record<string, WorkoutBlockContent>;
+}
 
 export interface MealOption {
   title: string;

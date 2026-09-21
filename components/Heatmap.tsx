@@ -1,5 +1,3 @@
-import { Chip } from "./Chip";
-
 export interface HeatmapDay {
   date: string;
   weekNumber: number;
@@ -7,38 +5,27 @@ export interface HeatmapDay {
   status: "complete" | "incomplete" | "future";
 }
 
-export function Heatmap({ days }: { days: HeatmapDay[] }) {
-  const weeks = Array.from({ length: 8 }, (_, i) => i + 1);
+export function Heatmap({ days, weeks }: { days: HeatmapDay[]; weeks: number }) {
+  const weekNumbers = Array.from({ length: weeks }, (_, i) => i + 1);
   const colorFor = (status: HeatmapDay["status"]) =>
-    status === "complete"
-      ? "bg-moss"
-      : status === "incomplete"
-        ? "bg-line-bright"
-        : "border border-line bg-transparent";
+    status === "complete" ? "bg-done" : status === "incomplete" ? "bg-line-strong" : "bg-canvas";
 
   return (
-    <div>
-      <div className="flex gap-1.5">
-        {weeks.map((week) => (
-          <div key={week} className="flex flex-col gap-1.5">
-            {Array.from({ length: 7 }, (_, dow) => {
-              const day = days.find((d) => d.weekNumber === week && d.dayOfWeek === dow);
-              return (
-                <div
-                  key={dow}
-                  title={day?.date}
-                  className={`h-3.5 w-3.5 rounded-sm ${day ? colorFor(day.status) : "bg-transparent"}`}
-                />
-              );
-            })}
-          </div>
-        ))}
-      </div>
-      <div className="mt-2 flex gap-2">
-        <Chip label="Completo" tone="success" />
-        <Chip label="Incompleto" tone="neutral" />
-        <Chip label="Futuro" tone="muted" />
-      </div>
+    <div className="flex gap-1.5">
+      {weekNumbers.map((week) => (
+        <div key={week} className="flex flex-1 flex-col gap-1.5">
+          {Array.from({ length: 7 }, (_, dow) => {
+            const day = days.find((d) => d.weekNumber === week && d.dayOfWeek === dow);
+            return (
+              <div
+                key={dow}
+                title={day?.date}
+                className={`aspect-square rounded ${day ? colorFor(day.status) : "bg-transparent"}`}
+              />
+            );
+          })}
+        </div>
+      ))}
     </div>
   );
 }

@@ -1,11 +1,4 @@
-import type {
-  DailyLog,
-  Exercise,
-  Meal,
-  Supplement,
-  WeekPatternEntry,
-  WorkoutBlockContent,
-} from "./types";
+import type { DailyLog, Meal, Supplement, WeekPatternEntry } from "./types";
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
@@ -65,26 +58,6 @@ export function getDayPattern(
     activityEditable: base.activityEditable,
     activityOptions: base.activityOptions,
   };
-}
-
-export interface ExerciseForWeek {
-  name: string;
-  reps: string;
-  tempo: string;
-  sets: number;
-}
-
-/** Flattens a block's exercises to the set count prescribed for one week. */
-export function getExercisesForWeek(
-  block: WorkoutBlockContent,
-  weekNumber: number,
-): ExerciseForWeek[] {
-  return block.exercises.map((exercise: Exercise) => ({
-    name: exercise.name,
-    reps: exercise.reps,
-    tempo: exercise.tempo,
-    sets: exercise.sets[weekNumber - 1],
-  }));
 }
 
 const REST_ACTIVITIES = new Set(["Nenhuma", "Descanso"]);
