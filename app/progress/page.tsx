@@ -29,9 +29,10 @@ export default async function ProgressPage() {
 
   for (let offset = 0; offset < totalDays; offset++) {
     const date = isoDateNDaysFrom(program.startDate, offset);
-    const programDay = offset + 1;
+    const programDay = getProgramDay(date, program.startDate);
     const weekNumber = getWeekNumber(programDay);
-    const dayOfWeek = offset % 7;
+    const jsDay = new Date(`${date}T00:00:00Z`).getUTCDay();
+    const dayOfWeek = jsDay === 0 ? 6 : jsDay - 1;
     const isFuture = date > today;
 
     const dailyLog = isFuture ? null : await getDailyLog(date);
