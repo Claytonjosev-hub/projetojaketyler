@@ -58,7 +58,9 @@ export function SupplementsList({
                 >
                   {supplement.name}
                 </span>
-                <span className="mt-0.5 block text-[13px] text-ink-dim">{supplement.dose}</span>
+                {supplement.dose && (
+                  <span className="mt-0.5 block text-[13px] text-ink-dim">{supplement.dose}</span>
+                )}
               </span>
             </label>
             {errorId === supplement.id && (
