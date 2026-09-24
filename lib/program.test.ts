@@ -5,6 +5,8 @@ import {
   getDayOfWeek,
   getDayPattern,
   getProgramDay,
+  getProgramTotalDays,
+  getProgramWeeks,
   getWeekNumber,
   isDayComplete,
   isRestActivity,
@@ -50,14 +52,29 @@ describe("getProgramDay", () => {
 
 describe("getWeekNumber", () => {
   it("clamps day 1 to week 1", () => {
-    expect(getWeekNumber(1)).toBe(1);
+    expect(getWeekNumber(1, 15)).toBe(1);
   });
   it("clamps day 7 to week 1 and day 8 to week 2", () => {
-    expect(getWeekNumber(7)).toBe(1);
-    expect(getWeekNumber(8)).toBe(2);
+    expect(getWeekNumber(7, 15)).toBe(1);
+    expect(getWeekNumber(8, 15)).toBe(2);
   });
-  it("clamps any day past week 8 to week 8", () => {
-    expect(getWeekNumber(57)).toBe(8);
+  it("never goes past the program's own length", () => {
+    expect(getWeekNumber(500, 15)).toBe(15);
+    expect(getWeekNumber(57, 8)).toBe(8);
+  });
+});
+
+describe("program length", () => {
+  const program = { startDate: "2026-09-24", endDate: "2026-12-31" };
+
+  it("counts both ends of the window", () => {
+    expect(getProgramTotalDays(program)).toBe(99);
+  });
+
+  it("rounds a partial final week up", () => {
+    expect(getProgramWeeks(program)).toBe(15);
+    expect(getProgramWeeks({ startDate: "2026-09-24", endDate: "2026-09-30" })).toBe(1);
+    expect(getProgramWeeks({ startDate: "2026-09-24", endDate: "2026-10-01" })).toBe(2);
   });
 });
 

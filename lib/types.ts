@@ -5,7 +5,7 @@ export interface User {
 
 export interface Program {
   startDate: string; // "YYYY-MM-DD"
-  durationWeeks: number;
+  endDate: string; // "YYYY-MM-DD", inclusive
 }
 
 export interface WeekPatternEntry {

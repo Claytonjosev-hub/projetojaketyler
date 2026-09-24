@@ -10,6 +10,8 @@ import {
   getDayOfWeek,
   getDayPattern,
   getProgramDay,
+  getProgramTotalDays,
+  getProgramWeeks,
   getWeekNumber,
   isDayComplete,
   isRestActivity,
@@ -37,7 +39,8 @@ export default async function ProgressPage() {
     getContent(userId, "supplements"),
   ]);
 
-  const totalDays = program.durationWeeks * 7;
+  const totalDays = getProgramTotalDays(program);
+  const totalWeeks = getProgramWeeks(program);
   const logs = await getDailyLogRange(
     userId,
     program.startDate,
@@ -52,7 +55,7 @@ export default async function ProgressPage() {
   for (let offset = 0; offset < totalDays; offset++) {
     const date = isoDateNDaysFrom(program.startDate, offset);
     const programDay = getProgramDay(date, program.startDate);
-    const weekNumber = getWeekNumber(programDay);
+    const weekNumber = getWeekNumber(programDay, totalWeeks);
     const dayOfWeek = getDayOfWeek(date);
     const isFuture = date > today;
 
@@ -126,9 +129,9 @@ export default async function ProgressPage() {
 
       <Card className="p-5">
         <p className="mb-3 text-xs font-medium text-ink-faint">
-          {program.durationWeeks} semanas · cada coluna é uma semana
+          {totalWeeks} semanas · cada coluna é uma semana
         </p>
-        <Heatmap days={days} weeks={program.durationWeeks} />
+        <Heatmap days={days} weeks={totalWeeks} />
       </Card>
 
       <div className="grid grid-cols-2 gap-3">

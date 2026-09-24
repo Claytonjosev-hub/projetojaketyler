@@ -1,4 +1,4 @@
-import type { DailyLog, Meal, Supplement, WeekPatternEntry } from "./types";
+import type { DailyLog, Meal, Program, Supplement, WeekPatternEntry } from "./types";
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
@@ -38,10 +38,20 @@ export function getProgramDay(date: string, startDate: string): number {
   return diffDays + 1;
 }
 
-/** Program week for a given program day, clamped to [1, 8]. */
-export function getWeekNumber(programDay: number): number {
+/** Total days in the program window, counting both ends. */
+export function getProgramTotalDays(program: Program): number {
+  return getProgramDay(program.endDate, program.startDate);
+}
+
+/** Whole weeks the program spans — a partial final week still counts as one. */
+export function getProgramWeeks(program: Program): number {
+  return Math.max(1, Math.ceil(getProgramTotalDays(program) / 7));
+}
+
+/** Program week for a given program day, clamped to the program's own length. */
+export function getWeekNumber(programDay: number, totalWeeks: number): number {
   const week = Math.ceil(programDay / 7);
-  return Math.min(8, Math.max(1, week));
+  return Math.min(totalWeeks, Math.max(1, week));
 }
 
 export interface ResolvedDayPattern {

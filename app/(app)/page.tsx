@@ -5,6 +5,7 @@ import { TrainingCard } from "@/components/TrainingCard";
 import { WeekView } from "@/components/WeekView";
 import { ActivityDoneCheckbox } from "@/components/ActivityDoneCheckbox";
 import { DayNote } from "@/components/DayNote";
+import { DailyQuote } from "@/components/DailyQuote";
 import { UserPill } from "@/components/UserPill";
 import { getContent, getDailyLog } from "@/lib/db";
 import { getSession } from "@/lib/session";
@@ -13,6 +14,7 @@ import {
   getDayOfWeek,
   getDayPattern,
   getProgramDay,
+  getProgramWeeks,
   getWeekNumber,
   isRestActivity,
   todayIso,
@@ -42,7 +44,8 @@ export default async function HojePage({
   ]);
 
   const programDay = getProgramDay(date, program.startDate);
-  const weekNumber = getWeekNumber(programDay);
+  const totalWeeks = getProgramWeeks(program);
+  const weekNumber = getWeekNumber(programDay, totalWeeks);
   const pattern = getDayPattern(date, weekPattern, dailyLog);
 
   const workoutBlock = pattern.trainingBlock ? workoutPlan.blocks[pattern.trainingBlock] : null;
@@ -52,7 +55,7 @@ export default async function HojePage({
 
   const dayOfWeek = getDayOfWeek(date);
 
-  const daysRemaining = Math.max(0, program.durationWeeks * 7 - programDay + 1);
+  const daysRemaining = Math.max(0, getProgramDay(program.endDate, date));
 
   const requiresTraining = Boolean(pattern.trainingBlock) || !isRestActivity(pattern.activity);
   const mealsDone = meals.filter((m) => dailyLog?.meals[m.id]?.done).length;
@@ -75,7 +78,7 @@ export default async function HojePage({
           {formatDayMonth(date)}
         </p>
         <p className="tnum mt-0.5 text-sm text-ink-faint">
-          Semana {weekNumber} de {program.durationWeeks} · faltam {daysRemaining} dias
+          Semana {weekNumber} de {totalWeeks} · faltam {daysRemaining} dias
         </p>
 
         <div className="mt-4 flex items-center gap-3">
@@ -85,6 +88,8 @@ export default async function HojePage({
           </span>
         </div>
       </header>
+
+      <DailyQuote date={today} />
 
       <WeekView userId={userId} today={today} viewing={date} />
 
