@@ -9,6 +9,7 @@ import type { Exercise } from "@/lib/types";
 
 export function TrainingCard({
   date,
+  isToday,
   label,
   focus,
   cardio,
@@ -18,6 +19,7 @@ export function TrainingCard({
   guidelines,
 }: {
   date: string;
+  isToday: boolean;
   label: string;
   focus: string;
   cardio: string | null;
@@ -54,7 +56,9 @@ export function TrainingCard({
       >
         <div className="flex items-start justify-between gap-3">
           <div>
-            <p className="text-xs font-medium text-ink-faint">Treino de hoje</p>
+            <p className="text-xs font-medium text-ink-faint">
+              {isToday ? "Treino de hoje" : "Treino do dia"}
+            </p>
             <p className="mt-1 text-3xl font-extrabold leading-none tracking-tight">{label}</p>
             <p className="mt-1.5 text-sm text-ink-dim">
               {focus}

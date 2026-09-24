@@ -72,13 +72,15 @@ export default async function HojePage({
   const focus =
     date === today ? focusMeal(meals, dailyLog?.meals ?? {}, nowHourMinute()) : null;
 
+  // Days logged before the program started still deserve an honest count.
+  const streakFrom = date < program.startDate ? date : program.startDate;
   const logsSoFar = dayClosed
-    ? await getDailyLogRange(userId, program.startDate, date)
+    ? await getDailyLogRange(userId, streakFrom, date)
     : new Map();
   const streak = dayClosed
     ? countCompleteStreak({
         date,
-        startDate: program.startDate,
+        startDate: streakFrom,
         weekPattern,
         meals,
         supplements,
@@ -126,8 +128,9 @@ export default async function HojePage({
 
       {workoutBlock ? (
         <TrainingCard
-          key={date}
+          key={`training-${date}`}
           date={date}
+          isToday={date === today}
           label={workoutBlock.label}
           focus={workoutBlock.focus}
           cardio={pattern.activity}
@@ -141,14 +144,14 @@ export default async function HojePage({
       )}
 
       <MealsList
-        key={date}
+        key={`meals-${date}`}
         date={date}
         meals={meals}
         mealLogs={dailyLog?.meals ?? {}}
         focus={focus}
       />
       <SupplementsList
-        key={date}
+        key={`supplements-${date}`}
         date={date}
         supplements={supplements}
         supplementLogs={dailyLog?.supplements ?? {}}
