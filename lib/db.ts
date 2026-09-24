@@ -31,9 +31,16 @@ export async function setContent<K extends ContentKey>(
   `;
 }
 
+/**
+ * Every read formats `date` in SQL: the driver hands back a Date object for a
+ * DATE column, and stringifying that gives "Mon Sep 21", not an ISO date.
+ */
+const DAILY_LOG_COLUMNS = `to_char(date, 'YYYY-MM-DD') as date, training_done,
+  exercises_done, activity_choice, meals, supplements, note`;
+
 function rowToDailyLog(row: Record<string, unknown>): DailyLog {
   return {
-    date: String(row.date).slice(0, 10),
+    date: String(row.date),
     training_done: Boolean(row.training_done),
     exercises_done: (row.exercises_done ?? {}) as Record<string, boolean>,
     activity_choice: (row.activity_choice as string | null) ?? null,
@@ -44,9 +51,10 @@ function rowToDailyLog(row: Record<string, unknown>): DailyLog {
 }
 
 export async function getDailyLog(userId: string, date: string): Promise<DailyLog | null> {
-  const { rows } = await sql`
-    select * from daily_logs where user_id = ${userId} and date = ${date}
-  `;
+  const { rows } = await sql.query(
+    `select ${DAILY_LOG_COLUMNS} from daily_logs where user_id = $1 and date = $2`,
+    [userId, date],
+  );
   if (rows.length === 0) return null;
   return rowToDailyLog(rows[0]);
 }
@@ -57,10 +65,11 @@ export async function getDailyLogRange(
   from: string,
   to: string,
 ): Promise<Map<string, DailyLog>> {
-  const { rows } = await sql`
-    select * from daily_logs
-    where user_id = ${userId} and date >= ${from} and date <= ${to}
-  `;
+  const { rows } = await sql.query(
+    `select ${DAILY_LOG_COLUMNS} from daily_logs
+     where user_id = $1 and date >= $2 and date <= $3`,
+    [userId, from, to],
+  );
   const logs = new Map<string, DailyLog>();
   for (const row of rows) {
     const log = rowToDailyLog(row);

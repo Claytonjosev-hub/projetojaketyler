@@ -2,7 +2,5 @@
   { "id": "omega-3", "name": "Ômega 3", "dose": "2 a 3 cápsulas por dia" },
   { "id": "multivitaminico", "name": "Multivitamínico", "dose": "1 cápsula por dia" },
   { "id": "magnesio-inositol", "name": "Magnésio Inositol", "dose": "1 scoop por noite, antes de dormir (higiene do sono)" },
-  { "id": "maca-peruana", "name": "Maca Peruana", "dose": "" },
-  { "id": "arginina", "name": "Arginina", "dose": "" },
-  { "id": "tribulus", "name": "Tribulus", "dose": "" }
+  { "id": "manipulados", "name": "Manipulados", "dose": "Maca peruana · Arginina · Tribulus" }
 ]
