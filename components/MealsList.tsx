@@ -9,10 +9,12 @@ export function MealsList({
   date,
   meals,
   mealLogs,
+  focus,
 }: {
   date: string;
   meals: Meal[];
   mealLogs: Record<string, MealLogEntry>;
+  focus: { mealId: string; due: boolean } | null;
 }) {
   const [logs, setLogs] = useState(mealLogs);
   const [openId, setOpenId] = useState<string | null>(null);
@@ -79,6 +81,11 @@ export function MealsList({
                   >
                     {meal.name}
                   </span>
+                  {focus?.mealId === meal.id && !log.done && (
+                    <span className="ml-2 rounded-full bg-ink px-2 py-0.5 text-[11px] font-medium text-surface">
+                      {focus.due ? "agora" : "próxima"}
+                    </span>
+                  )}
                 </span>
                 <span className={`text-ink-faint transition-transform ${isOpen ? "rotate-180" : ""}`}>
                   ⌄

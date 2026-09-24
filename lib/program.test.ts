@@ -5,6 +5,8 @@ import {
   getDayOfWeek,
   getDayPattern,
   getProgramDay,
+  countCompleteStreak,
+  focusMeal,
   getProgramTotalDays,
   getProgramWeeks,
   getWeekNumber,
@@ -221,5 +223,80 @@ describe("formatWeekSummary", () => {
     expect(formatWeekSummary({ ...base, notes: [] })).toBe(
       ["Semana 1 · 21 set a 27 set", "Dias completos: 4/7", "Treinos: 5/6", "Refeições: 38/42"].join("\n"),
     );
+  });
+});
+
+describe("focusMeal", () => {
+  const dayMeals: Meal[] = [
+    { id: "cafe", time: "07:00", name: "Café", options: [] },
+    { id: "almoco", time: "12:00", name: "Almoço", options: [] },
+    { id: "lanche", time: "16:00", name: "Lanche", options: [] },
+  ];
+  const done = (...ids: string[]) =>
+    Object.fromEntries(ids.map((id) => [id, { chosenOptionIndex: 0, done: true }]));
+
+  it("points at the next one coming up when nothing is overdue", () => {
+    expect(focusMeal(dayMeals, done("cafe", "almoco"), "15:40")).toEqual({
+      mealId: "lanche",
+      due: false,
+    });
+  });
+
+  it("points at what is already due and still unchecked", () => {
+    expect(focusMeal(dayMeals, done("cafe"), "15:40")).toEqual({ mealId: "almoco", due: true });
+  });
+
+  it("points at the first meal before the day starts", () => {
+    expect(focusMeal(dayMeals, {}, "06:00")).toEqual({ mealId: "cafe", due: false });
+  });
+
+  it("points at nothing once every meal is done", () => {
+    expect(focusMeal(dayMeals, done("cafe", "almoco", "lanche"), "20:00")).toBeNull();
+  });
+});
+
+describe("countCompleteStreak", () => {
+  const fullDay = (date: string): DailyLog => ({
+    ...emptyLog(date),
+    activity_choice: "Descanso",
+    training_done: false,
+    meals: { cafe: { chosenOptionIndex: 0, done: true } },
+    supplements: { "omega-3": true },
+  });
+
+  const restPattern: WeekPatternEntry[] = Array.from({ length: 7 }, (_, dayOfWeek) => ({
+    dayOfWeek,
+    trainingBlock: null,
+    activity: null,
+    activityEditable: true,
+    activityOptions: ["Descanso"],
+  }));
+
+  const params = (logs: Map<string, DailyLog>, date: string) => ({
+    date,
+    startDate: "2026-09-21",
+    weekPattern: restPattern,
+    meals,
+    supplements,
+    logs,
+  });
+
+  it("counts back through consecutive complete days", () => {
+    const logs = new Map(
+      ["2026-09-21", "2026-09-22", "2026-09-23"].map((d) => [d, fullDay(d)] as const),
+    );
+    expect(countCompleteStreak(params(logs, "2026-09-23"))).toBe(3);
+  });
+
+  it("is 0 when the day itself is not complete", () => {
+    const logs = new Map([["2026-09-21", fullDay("2026-09-21")] as const]);
+    expect(countCompleteStreak(params(logs, "2026-09-22"))).toBe(0);
+  });
+
+  it("stops at the first gap", () => {
+    const logs = new Map(
+      ["2026-09-21", "2026-09-23"].map((d) => [d, fullDay(d)] as const),
+    );
+    expect(countCompleteStreak(params(logs, "2026-09-23"))).toBe(1);
   });
 });

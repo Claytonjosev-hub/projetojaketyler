@@ -7,9 +7,11 @@ import { ActivityDoneCheckbox } from "@/components/ActivityDoneCheckbox";
 import { DayNote } from "@/components/DayNote";
 import { DailyQuote } from "@/components/DailyQuote";
 import { UserPill } from "@/components/UserPill";
-import { getContent, getDailyLog } from "@/lib/db";
+import { getContent, getDailyLog, getDailyLogRange } from "@/lib/db";
 import { getSession } from "@/lib/session";
 import {
+  countCompleteStreak,
+  focusMeal,
   formatDayMonth,
   getDayOfWeek,
   getDayPattern,
@@ -17,6 +19,7 @@ import {
   getProgramWeeks,
   getWeekNumber,
   isRestActivity,
+  nowHourMinute,
   todayIso,
 } from "@/lib/program";
 import { setActivityChoice } from "@/app/actions";
@@ -63,6 +66,25 @@ export default async function HojePage({
   const dayTotal = meals.length + supplements.length + (requiresTraining ? 1 : 0);
   const dayDone =
     mealsDone + supplementsDone + (requiresTraining && dailyLog?.training_done ? 1 : 0);
+  const dayClosed = dayTotal > 0 && dayDone === dayTotal;
+
+  // Only nudge about the clock on the day you are actually living.
+  const focus =
+    date === today ? focusMeal(meals, dailyLog?.meals ?? {}, nowHourMinute()) : null;
+
+  const logsSoFar = dayClosed
+    ? await getDailyLogRange(userId, program.startDate, date)
+    : new Map();
+  const streak = dayClosed
+    ? countCompleteStreak({
+        date,
+        startDate: program.startDate,
+        weekPattern,
+        meals,
+        supplements,
+        logs: logsSoFar,
+      })
+    : 0;
 
   return (
     <main className="mx-auto max-w-lg space-y-3 p-4 pt-8">
@@ -89,6 +111,15 @@ export default async function HojePage({
         </div>
       </header>
 
+      {dayClosed && (
+        <div className="rounded-2xl bg-done px-5 py-4 text-white">
+          <p className="font-semibold">Dia fechado</p>
+          <p className="mt-0.5 text-sm text-white/80">
+            {streak} {streak === 1 ? "dia seguido" : "dias seguidos"}
+          </p>
+        </div>
+      )}
+
       <DailyQuote date={today} />
 
       <WeekView userId={userId} today={today} viewing={date} />
@@ -109,7 +140,13 @@ export default async function HojePage({
         <ActivityPicker date={date} pattern={pattern} trainingDone={dailyLog?.training_done ?? false} />
       )}
 
-      <MealsList key={date} date={date} meals={meals} mealLogs={dailyLog?.meals ?? {}} />
+      <MealsList
+        key={date}
+        date={date}
+        meals={meals}
+        mealLogs={dailyLog?.meals ?? {}}
+        focus={focus}
+      />
       <SupplementsList
         key={date}
         date={date}

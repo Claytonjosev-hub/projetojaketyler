@@ -1,4 +1,11 @@
-import type { DailyLog, Meal, Program, Supplement, WeekPatternEntry } from "./types";
+import type {
+  DailyLog,
+  Meal,
+  MealLogEntry,
+  Program,
+  Supplement,
+  WeekPatternEntry,
+} from "./types";
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
@@ -164,4 +171,73 @@ export function formatWeekSummary(summary: WeekSummary): string {
   }
 
   return lines.join("\n");
+}
+
+/** Current wall-clock time as "HH:MM" in the app's timezone. */
+export function nowHourMinute(timeZone: string = "America/Fortaleza"): string {
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone,
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(new Date());
+}
+
+export interface MealFocus {
+  mealId: string;
+  /** Its time has already passed — it is what you owe right now. */
+  due: boolean;
+}
+
+/**
+ * The one meal worth pointing at when the app opens: whatever is already due
+ * and still unchecked, otherwise the next one coming up.
+ */
+export function focusMeal(
+  meals: Meal[],
+  mealLogs: Record<string, MealLogEntry>,
+  now: string,
+): MealFocus | null {
+  const pending = meals.filter((meal) => !mealLogs[meal.id]?.done);
+  if (pending.length === 0) return null;
+
+  const due = pending.filter((meal) => meal.time <= now);
+  if (due.length > 0) {
+    return { mealId: due[due.length - 1].id, due: true };
+  }
+  return { mealId: pending[0].id, due: false };
+}
+
+export interface StreakParams {
+  date: string;
+  startDate: string;
+  weekPattern: WeekPatternEntry[];
+  meals: Meal[];
+  supplements: Supplement[];
+  logs: Map<string, DailyLog>;
+}
+
+/** Complete days in a row ending on `date` — 0 when `date` itself is not complete. */
+export function countCompleteStreak({
+  date,
+  startDate,
+  weekPattern,
+  meals,
+  supplements,
+  logs,
+}: StreakParams): number {
+  let streak = 0;
+  let cursor = date;
+
+  while (toUtcDate(cursor) >= toUtcDate(startDate)) {
+    const dailyLog = logs.get(cursor) ?? null;
+    const pattern = getDayPattern(cursor, weekPattern, dailyLog);
+    if (!isDayComplete({ date: cursor, today: date, dailyLog, pattern, meals, supplements })) {
+      break;
+    }
+    streak += 1;
+    cursor = new Date(toUtcDate(cursor) - MS_PER_DAY).toISOString().slice(0, 10);
+  }
+
+  return streak;
 }
