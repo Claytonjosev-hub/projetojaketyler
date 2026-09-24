@@ -1,5 +1,5 @@
 import { Card } from "./Card";
-import { getContent, getDailyLog } from "@/lib/db";
+import { getContent, getDailyLogRange } from "@/lib/db";
 import { getDayPattern, getProgramDay, isDayComplete } from "@/lib/program";
 
 const WEEKDAY_LABELS = ["seg", "ter", "qua", "qui", "sex", "sáb", "dom"];
@@ -10,13 +10,21 @@ function isoDateNDaysFrom(base: string, offset: number): string {
   return d.toISOString().slice(0, 10);
 }
 
-export async function WeekView({ today, viewing }: { today: string; viewing: string }) {
+export async function WeekView({
+  userId,
+  today,
+  viewing,
+}: {
+  userId: string;
+  today: string;
+  viewing: string;
+}) {
   const [program, weekPattern, workoutPlan, meals, supplements] = await Promise.all([
-    getContent("program"),
-    getContent("weekPattern"),
-    getContent("workoutPlan"),
-    getContent("meals"),
-    getContent("supplements"),
+    getContent(userId, "program"),
+    getContent(userId, "weekPattern"),
+    getContent(userId, "workoutPlan"),
+    getContent(userId, "meals"),
+    getContent(userId, "supplements"),
   ]);
 
   const todayProgramDay = getProgramDay(today, program.startDate);
@@ -24,10 +32,11 @@ export async function WeekView({ today, viewing }: { today: string; viewing: str
   const todayDayOfWeek = jsDay === 0 ? 6 : jsDay - 1;
   const weekStart = isoDateNDaysFrom(today, -todayDayOfWeek);
 
-  const days = await Promise.all(
-    Array.from({ length: 7 }, (_, i) => i).map(async (i) => {
+  const logs = await getDailyLogRange(userId, weekStart, isoDateNDaysFrom(weekStart, 6));
+
+  const days = Array.from({ length: 7 }, (_, i) => i).map((i) => {
       const date = isoDateNDaysFrom(weekStart, i);
-      const dailyLog = await getDailyLog(date);
+      const dailyLog = logs.get(date) ?? null;
       const pattern = getDayPattern(date, weekPattern, dailyLog);
       const complete = isDayComplete({ date, today, dailyLog, pattern, meals, supplements });
       const block = pattern.trainingBlock ? workoutPlan.blocks[pattern.trainingBlock] : null;
@@ -39,8 +48,7 @@ export async function WeekView({ today, viewing }: { today: string; viewing: str
         isViewing: date === viewing,
         isFuture: getProgramDay(date, program.startDate) > todayProgramDay,
       };
-    }),
-  );
+  });
 
   return (
     <Card className="px-2 py-3">

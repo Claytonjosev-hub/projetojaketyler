@@ -14,6 +14,12 @@ function loadJson<T>(filename: string): T {
   return JSON.parse(readFileSync(path, "utf-8")) as T;
 }
 
+const userId = process.argv[2];
+if (!userId) {
+  console.error("uso: npm run seed -- <userId>");
+  process.exit(1);
+}
+
 async function main() {
   const program = loadJson<Program>("program.json");
   const weekPattern = loadJson<WeekPatternEntry[]>("week-pattern.json");
@@ -21,13 +27,13 @@ async function main() {
   const meals = loadJson<Meal[]>("meals.json");
   const supplements = loadJson<Supplement[]>("supplements.json");
 
-  await setContent("program", program);
-  await setContent("weekPattern", weekPattern);
-  await setContent("workoutPlan", workoutPlan);
-  await setContent("meals", meals);
-  await setContent("supplements", supplements);
+  await setContent(userId, "program", program);
+  await setContent(userId, "weekPattern", weekPattern);
+  await setContent(userId, "workoutPlan", workoutPlan);
+  await setContent(userId, "meals", meals);
+  await setContent(userId, "supplements", supplements);
 
-  console.log("Seeded: program, weekPattern, workoutPlan, meals, supplements");
+  console.log(`Seeded ${userId}: program, weekPattern, workoutPlan, meals, supplements`);
 }
 
 main().catch((err) => {

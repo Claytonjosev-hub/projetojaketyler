@@ -1,24 +1,33 @@
 import { sql } from "@vercel/postgres";
-import type { ContentKey, ContentShape, DailyLog } from "./types";
+import type { ContentKey, ContentShape, DailyLog, User } from "./types";
+
+export async function listUsers(): Promise<User[]> {
+  const { rows } = await sql`select id, name from users order by sort_order, name`;
+  return rows.map((row) => ({ id: String(row.id), name: String(row.name) }));
+}
 
 export async function getContent<K extends ContentKey>(
+  userId: string,
   key: K,
 ): Promise<ContentShape[K]> {
-  const { rows } = await sql`select data from content where key = ${key}`;
+  const { rows } = await sql`
+    select data from content where user_id = ${userId} and key = ${key}
+  `;
   if (rows.length === 0) {
-    throw new Error(`content key "${key}" has not been seeded yet`);
+    throw new Error(`content "${key}" has not been set up for ${userId}`);
   }
   return rows[0].data as ContentShape[K];
 }
 
 export async function setContent<K extends ContentKey>(
+  userId: string,
   key: K,
   data: ContentShape[K],
 ): Promise<void> {
   await sql`
-    insert into content (key, data, updated_at)
-    values (${key}, ${JSON.stringify(data)}::jsonb, now())
-    on conflict (key) do update set data = excluded.data, updated_at = now()
+    insert into content (user_id, key, data, updated_at)
+    values (${userId}, ${key}, ${JSON.stringify(data)}::jsonb, now())
+    on conflict (user_id, key) do update set data = excluded.data, updated_at = now()
   `;
 }
 
@@ -34,17 +43,38 @@ function rowToDailyLog(row: Record<string, unknown>): DailyLog {
   };
 }
 
-export async function getDailyLog(date: string): Promise<DailyLog | null> {
-  const { rows } = await sql`select * from daily_logs where date = ${date}`;
+export async function getDailyLog(userId: string, date: string): Promise<DailyLog | null> {
+  const { rows } = await sql`
+    select * from daily_logs where user_id = ${userId} and date = ${date}
+  `;
   if (rows.length === 0) return null;
   return rowToDailyLog(rows[0]);
 }
 
+/** Every log the user has between two dates, keyed by "YYYY-MM-DD". */
+export async function getDailyLogRange(
+  userId: string,
+  from: string,
+  to: string,
+): Promise<Map<string, DailyLog>> {
+  const { rows } = await sql`
+    select * from daily_logs
+    where user_id = ${userId} and date >= ${from} and date <= ${to}
+  `;
+  const logs = new Map<string, DailyLog>();
+  for (const row of rows) {
+    const log = rowToDailyLog(row);
+    logs.set(log.date, log);
+  }
+  return logs;
+}
+
 export async function upsertDailyLog(
+  userId: string,
   date: string,
   patch: Partial<Omit<DailyLog, "date">>,
 ): Promise<DailyLog> {
-  const existing = (await getDailyLog(date)) ?? {
+  const existing = (await getDailyLog(userId, date)) ?? {
     date,
     training_done: false,
     exercises_done: {},
@@ -56,8 +86,9 @@ export async function upsertDailyLog(
   const next: DailyLog = { ...existing, ...patch, date };
   await sql`
     insert into daily_logs
-      (date, training_done, exercises_done, activity_choice, meals, supplements, note, updated_at)
+      (user_id, date, training_done, exercises_done, activity_choice, meals, supplements, note, updated_at)
     values (
+      ${userId},
       ${date},
       ${next.training_done},
       ${JSON.stringify(next.exercises_done)}::jsonb,
@@ -67,7 +98,7 @@ export async function upsertDailyLog(
       ${next.note},
       now()
     )
-    on conflict (date) do update set
+    on conflict (user_id, date) do update set
       training_done = excluded.training_done,
       exercises_done = excluded.exercises_done,
       activity_choice = excluded.activity_choice,

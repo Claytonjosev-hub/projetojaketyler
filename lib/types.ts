@@ -1,3 +1,8 @@
+export interface User {
+  id: string;
+  name: string;
+}
+
 export interface Program {
   startDate: string; // "YYYY-MM-DD"
   durationWeeks: number;

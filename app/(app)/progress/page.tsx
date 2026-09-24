@@ -2,7 +2,9 @@ import { Heatmap, type HeatmapDay } from "@/components/Heatmap";
 import { Card } from "@/components/Card";
 import { ProgressBar } from "@/components/ProgressBar";
 import { WeekSummaryCard } from "@/components/WeekSummaryCard";
-import { getContent, getDailyLog } from "@/lib/db";
+import { UserPill } from "@/components/UserPill";
+import { getContent, getDailyLogRange } from "@/lib/db";
+import { getSession } from "@/lib/session";
 import {
   formatWeekSummary,
   getDayOfWeek,
@@ -25,14 +27,22 @@ function isoDateNDaysFrom(base: string, offset: number): string {
 
 export default async function ProgressPage() {
   const today = todayIso();
+  const { users, current } = await getSession();
+  const userId = current!.id;
+
   const [program, weekPattern, meals, supplements] = await Promise.all([
-    getContent("program"),
-    getContent("weekPattern"),
-    getContent("meals"),
-    getContent("supplements"),
+    getContent(userId, "program"),
+    getContent(userId, "weekPattern"),
+    getContent(userId, "meals"),
+    getContent(userId, "supplements"),
   ]);
 
   const totalDays = program.durationWeeks * 7;
+  const logs = await getDailyLogRange(
+    userId,
+    program.startDate,
+    isoDateNDaysFrom(program.startDate, totalDays - 1),
+  );
   const days: HeatmapDay[] = [];
   const weekSummaries = new Map<number, WeekSummary>();
   let completedCount = 0;
@@ -46,7 +56,7 @@ export default async function ProgressPage() {
     const dayOfWeek = getDayOfWeek(date);
     const isFuture = date > today;
 
-    const dailyLog = isFuture ? null : await getDailyLog(date);
+    const dailyLog = isFuture ? null : (logs.get(date) ?? null);
     const pattern = getDayPattern(date, weekPattern, dailyLog);
     const complete = !isFuture && isDayComplete({ date, today, dailyLog, pattern, meals, supplements });
 
@@ -109,7 +119,10 @@ export default async function ProgressPage() {
 
   return (
     <main className="mx-auto max-w-lg space-y-3 p-4 pt-8">
-      <h1 className="px-1 pb-2 text-[32px] font-extrabold leading-none tracking-tight">Progresso</h1>
+      <div className="mb-2 flex items-start justify-between gap-3 px-1">
+        <h1 className="text-[32px] font-extrabold leading-none tracking-tight">Progresso</h1>
+        <UserPill users={users} currentId={userId} />
+      </div>
 
       <Card className="p-5">
         <p className="mb-3 text-xs font-medium text-ink-faint">

@@ -5,7 +5,9 @@ import { TrainingCard } from "@/components/TrainingCard";
 import { WeekView } from "@/components/WeekView";
 import { ActivityDoneCheckbox } from "@/components/ActivityDoneCheckbox";
 import { DayNote } from "@/components/DayNote";
+import { UserPill } from "@/components/UserPill";
 import { getContent, getDailyLog } from "@/lib/db";
+import { getSession } from "@/lib/session";
 import {
   formatDayMonth,
   getDayOfWeek,
@@ -27,13 +29,16 @@ export default async function HojePage({
   const date = dateParam ?? todayIso();
   const today = todayIso();
 
+  const { users, current } = await getSession();
+  const userId = current!.id;
+
   const [program, weekPattern, workoutPlan, meals, supplements, dailyLog] = await Promise.all([
-    getContent("program"),
-    getContent("weekPattern"),
-    getContent("workoutPlan"),
-    getContent("meals"),
-    getContent("supplements"),
-    getDailyLog(date),
+    getContent(userId, "program"),
+    getContent(userId, "weekPattern"),
+    getContent(userId, "workoutPlan"),
+    getContent(userId, "meals"),
+    getContent(userId, "supplements"),
+    getDailyLog(userId, date),
   ]);
 
   const programDay = getProgramDay(date, program.startDate);
@@ -59,10 +64,13 @@ export default async function HojePage({
   return (
     <main className="mx-auto max-w-lg space-y-3 p-4 pt-8">
       <header className="px-1 pb-1">
-        <h1 className="text-[32px] font-extrabold leading-none tracking-tight">
-          {date === today ? "Hoje" : WEEKDAY_NAMES[dayOfWeek]}
-        </h1>
-        <p className="mt-2 text-sm text-ink-dim">
+        <div className="mb-3 flex items-start justify-between gap-3">
+          <h1 className="text-[32px] font-extrabold leading-none tracking-tight">
+            {date === today ? "Hoje" : WEEKDAY_NAMES[dayOfWeek]}
+          </h1>
+          <UserPill users={users} currentId={userId} />
+        </div>
+        <p className="text-sm text-ink-dim">
           {date === today ? `${WEEKDAY_NAMES[dayOfWeek].toLowerCase()}, ` : ""}
           {formatDayMonth(date)}
         </p>
@@ -78,7 +86,7 @@ export default async function HojePage({
         </div>
       </header>
 
-      <WeekView today={today} viewing={date} />
+      <WeekView userId={userId} today={today} viewing={date} />
 
       {workoutBlock ? (
         <TrainingCard
