@@ -33,6 +33,9 @@ export function UserPill({ users, currentId }: { users: User[]; currentId: strin
               onClick={async () => {
                 setOpen(false);
                 await switchUser(user.id);
+                // Full load: a soft navigation would keep the previous
+                // profile's cards mounted while only the header updated.
+                window.location.assign("/");
               }}
               className="flex min-h-12 w-full items-center gap-2 px-3 text-left text-sm active:bg-canvas"
             >

@@ -2,7 +2,6 @@
 
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import { getContent, getDailyLog, listUsers, setContent, upsertDailyLog } from "@/lib/db";
 import { getDayPattern, isRestActivity } from "@/lib/program";
 import { USER_COOKIE, USER_COOKIE_MAX_AGE, requireUserId } from "@/lib/session";
@@ -29,7 +28,6 @@ export async function switchUser(userId: string) {
     sameSite: "lax",
   });
   revalidateAll();
-  redirect("/");
 }
 
 async function recomputeTrainingDone(
